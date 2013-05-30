@@ -19,4 +19,10 @@ vector<string> split(string const& s,char c){
 	return r;
 }
 
-
+string toupper(string const& s){
+	stringstream ss;
+	for(auto c:s){
+		ss<<(char)::toupper(c);
+	}
+	return ss.str();
+}

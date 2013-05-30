@@ -413,7 +413,41 @@ vector<BEvent_details> all_event_details(int year){
 	return mapf(get_details,get_event_keys(year));
 }
 
-typedef string Competition_level;
+//typedef string Competition_level;
+enum class Competition_level{QUALS,QUARTERS,SEMIS,FINALS};
+
+Maybe<Competition_level> parse_competition_level(string s){
+	#define X(name) if(toupper(s)==""#name) return Competition_level::name;
+	X(QUALS)
+	X(QUARTERS)
+	X(SEMIS)
+	X(FINALS)
+	#undef X
+	return Maybe<Competition_level>();
+}
+/*struct Competition_level{
+	string data;
+
+	Competition_level(){} //todo: delete this.
+	explicit Competition_level(string s):data(s){}
+	//operator string()const{ return data; }
+};
+
+bool operator==(Competition_level,Competition_level)nyi
+bool operator<(Competition_level a,Competition_level b){ return a.data<b.data; }
+*/
+ostream& operator<<(ostream& o,Competition_level c){
+	switch(c){
+		#define X(name) case Competition_level::name: return o<<""#name;
+		X(QUALS)
+		X(QUARTERS)
+		X(SEMIS)
+		X(FINALS)
+		#undef X
+		default: nyi
+	}
+}
+
 
 //struct Match_id
 
@@ -448,6 +482,12 @@ bool operator<(Match_info::Alliance const& a,Match_info::Alliance const& b){
 	X(teams);
 	#undef X
 	return 0;
+}
+
+set<Competition_level> competition_level(vector<Match_info> const& m){
+	set<Competition_level> r;
+	for(auto& a:m) r|=a.competition_level;
+	return r;
 }
 
 template<typename T>
@@ -510,7 +550,7 @@ Match_info match_info(string const& match_key){
 		}else if(n=="set_number"){
 			r.set_number=v.get_int();
 		}else if(n=="competition_level"){
-			r.competition_level=s();
+			r.competition_level=*parse_competition_level(s());
 		}else if(n=="key"){
 			r.key=s();
 		}else if(n=="alliances"){
@@ -968,8 +1008,229 @@ string team_page(Team team){
 	));
 }
 
+//should probably move to util
+string join(vector<string> const& v,char c){
+	stringstream ss;
+	for(unsigned i=0;i+1<v.size();i++){
+		ss<<v[i]<<c;
+	}
+	if(v.size()){
+		ss<<v[v.size()-1];
+	}
+	return ss.str();
+}
+
+//aka cdr
+template<typename T>
+vector<T> tail(vector<T> const& v){
+	vector<T> r;
+	for(unsigned i=1;i<v.size();i++){
+		r|=v[i];
+	}
+	return r;
+}
+
+//should probably move to util
+map<string,string> env_vars(char **envp){
+	assert(envp);
+	map<string,string> r;
+	for(char **env=envp;*env;env++){
+		string e=*env;
+		auto sp=split(e,'=');
+		r[sp[0]]=join(tail(sp),'=');
+	}
+	return r;
+}
+
+//should probably move to util
+vector<string> args(int argc,char **argv){
+	vector<string> r;
+	for(unsigned i=1;i<argc;i++) r|=string(argv[i]);
+	return r;
+}
+
+enum class Listing_type{TEAM,EVENT,MATCH};
+
+//this might change to a map to a vector of string at some point.
+map<string,vector<string>> get_flags(vector<string> args){
+	auto flag=mapf(
+		[](string s)->Maybe<string>{
+			if(prefix(s,"--")){
+				return string(s.c_str()+2);
+			}else{
+				return Maybe<string>();
+			}
+		},
+		args
+	);
+	flag|=Maybe<string>("Ignore");
+	map<string,vector<string>> r;
+	for(unsigned i=0;i<args.size();i++){
+		if(flag[i]){
+			auto name=*flag[i];
+			if(flag[i+1]){
+				r[name];
+			}else{
+				r[name]|=args[i+1];
+				i++;
+			}
+		}else{
+			//probably should just go into an argument list...
+			nyi
+		}
+	}
+	return r;
+}
+
+set<string> events(vector<Match_info> const& v){
+	set<string> r;
+	for(auto a:v) r|=a.event;
+	return r;
+}
+
+template<typename T>
+Maybe<T> operator&(set<T> s,T t){
+	if(contains(s,t)){
+		return t;
+	}
+	return Maybe<T>();
+}
+
+template<typename T>
+vector<T>& operator|=(vector<T> &v,vector<T> a){
+	for(auto elem:a) v|=elem;
+	return v;
+}
+
+template<typename K,typename V>
+set<K> keys(map<K,V> const& m){
+	set<K> r;
+	for(auto p:m) r|=p.first;
+	return r;
+}
+
+template<typename T>
+set<T> a_and_not_b(set<T> const& a,set<T> const& b){
+	set<T> r;
+	for(auto elem:a){
+		if(b.find(elem)==b.end()){
+			r|=elem;
+		}
+	}
+	return r;
+}
+
+int run_main(map<string,vector<string>> flags){
+	set<string> flags_used;
+	auto get_flag=[&](string name)->Maybe<vector<string>>{
+		auto f=flags.find(name);
+		if(f==flags.end()) return Maybe<vector<string>>();
+		flags_used|=name;
+		return Maybe<vector<string>>(f->second);
+	};
+	auto get_flag_default=[&](string name,string default_value)->vector<string>{
+		auto f=get_flag(name);
+		if(!f) return vector<string>{default_value};
+		return *f;
+	};
+
+	auto y=get_flag_default("year","2013");
+	vector<Match_info> m;
+	for(auto year_str:y){
+		int year=atoi(year_str.c_str());
+		m|=matches(year);
+	}
+
+	auto b=get_flag("team");
+	if(b){
+		for(auto f:*b){
+			Team team{f};
+			m=filter([&](Match_info const& m){ return teams(m)&team; },m);
+		}
+	}
+
+	auto c=get_flag("competition_level");
+	if(c){
+		for(auto f:*c){
+			auto p=parse_competition_level(f);
+			if(!p){
+				cout<<"Error: Could not parse to a competition level: \""<<f<<"\"\n";
+				return 1;
+			}
+			auto level=*p;
+			m=filter([&](Match_info const& m){ return m.competition_level==level; },m);
+		}
+	}
+
+	auto d=get_flag("event");
+	if(d){
+		for(auto f:*d){
+			m=filter([&](Match_info const& m){ return m.event==f; },m);
+		}
+	}
+
+	if(get_flag("matches")){
+		//cout<<m<<"\n";
+		for(auto a:m){
+			cout<<a<<"\n";
+		}
+	}
+
+	if(get_flag("averages")){
+		cout<<"mean="<<mean(scores(m))<<"\n";
+		cout<<"median="<<median(scores(m))<<"\n";
+		cout<<"mode="<<mode(scores(m))<<"\n";
+		cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
+		cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
+	}
+	if(get_flag("teams")){
+		cout<<teams(m)<<"\n";
+	}
+	if(get_flag("team_count")){
+		cout<<"Teams: "<<teams(m).size()<<"\n";
+	}
+	if(get_flag("events")){
+		cout<<events(m)<<"\n";
+	}
+	if(get_flag("event_count")){
+		cout<<"Events: "<<events(m).size()<<"\n";
+	}
+	if(get_flag("competition_levels")){
+		cout<<competition_level(m)<<"\n";
+	}
+	auto unused=a_and_not_b(keys(flags),flags_used);
+	if(unused.size()){
+		cout<<"Error: Unused flags:"<<unused<<"\n";
+		return 1;
+	}
+
+	return 0;
+}
+
 //takes about 5 minutes to get all the details on the events, then extra time beyond that to get the matches.
-int main(){
+int main(int argc,char **argv,char **envp){
+	auto env=env_vars(envp);
+	auto f=env.find("QUERY");
+	if(f!=env.end()){ //this is for if you want to run the program as a cgi script
+		map<string,vector<string>> flags;
+		mapf(
+			[&flags](string s){
+				auto sp=split(s,'=');
+				if(sp.size()==1){
+					flags[sp[0]]=vector<string>();
+					return 0;
+				}
+				if(sp.size()==2){
+					flags[sp[0]]|=sp[1];
+				}
+				nyi //should probably just join all the other things back together.
+			},
+			split(f->second,'&')
+		);
+		return run_main(flags);
+	}
+	return run_main(get_flags(args(argc,argv)));
+
 	cout<<team_basic(Team("frc1425"))<<"\n";
 	//t();
 	//return 0;

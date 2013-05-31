@@ -1,55 +1,20 @@
+#include<sstream>
 #include<cassert>
-#include<set>
 #include<string.h>
-#include<type_traits>
 #include<boost/numeric/ublas/matrix.hpp>
 #include<boost/numeric/ublas/vector.hpp>
 #include<boost/numeric/ublas/lu.hpp>
 #include<boost/numeric/ublas/io.hpp>
+#include "json_spirit.h"
 #include "util.h"
 #include "str.h"
-#include "default.h"
 #include "map.h"
 #include "set.h"
-#include "maybe.h"
+#include "team.h"
+#include "bevent.h"
+#include "match_info.h"
 
 using namespace std;
-
-template<typename Func,typename Collection>
-auto mapf(Func f,Collection const& c)->vector<decltype(f(*begin(c)))>{
-	vector<decltype(f(*begin(c)))> r;
-	for(auto elem:c) r|=f(elem);
-	return r;
-}
-
-template<typename T>
-set<T> to_set(vector<T> const& v){
-	set<T> r;
-	for(auto e:v) r|=e;
-	return r;
-}
-
-template<typename T>
-set<T>& operator|=(set<T>& a,set<T> const& b){
-	for(auto elem:b) a.insert(elem);
-	return a;
-}
-
-template<typename T>
-vector<T> take(unsigned lim,vector<T> const& in){
-	vector<T> r;
-	for(unsigned i=0;i<lim;i++){
-		r|=in[i];
-	}
-	return r;
-}
-
-template<typename T>
-vector<T> skip(unsigned i,vector<T> const& v){
-	vector<T> r;
-	for(;i<v.size();i++) r|=v[i];
-	return r;
-}
 
 string escape_to_commandline(char c){
 	//NOTE: If you ever want to run this as a cgi script or something, you will neeed to make this better.
@@ -171,26 +136,6 @@ string interpret_html_escapes(string const& s){
 
 typedef string Regional_type;
 typedef string Match;
-//typedef string Team;
-
-class Team{
-	//the only complication with making this be an int or something is that sometimes offseason events have teams with "A" and "B" teams
-	string s;
-
-	public:
-	explicit Team(string a):s(a){
-		assert(s.size()>3 && s[0]=='f' && s[1]=='r' && s[2]=='c');
-	}
-
-	friend ostream& operator<<(ostream&,Team const&);
-	friend bool operator<(Team const&,Team const&);
-	friend bool operator==(Team const&,Team const&);
-};
-
-ostream& operator<<(ostream& o,Team const& t){ return o<<t.s; }
-
-bool operator<(Team const& a,Team const& b){ return a.s<b.s; }
-bool operator==(Team const& a,Team const& b){ return a.s==b.s; }
 
 struct Event{
 	string name;
@@ -238,8 +183,6 @@ vector<Event> events(){
 	return r;
 }
 
-#include "json_spirit.h"
-
 ostream& operator<<(ostream& o,json_spirit::Value const& v){
 	write(v,o,json_spirit::pretty_print);
 	return o;
@@ -256,21 +199,9 @@ ostream& operator<<(ostream& o,json_spirit::Pair_impl<A> const& p){
 	return o<<"("<<p.name_<<" "<<p.value_<<")";
 }
 
-struct BEvent{
-	//event info from the blue allaince.
-	string name;
-	Maybe<string> name_short;
-	string start_date,end_date;
-	bool official;
-	string key;
-};
-
-ostream& operator<<(ostream& o,BEvent const& b){
-	return o<<"BEvent("<<b.name<<" "<<b.key<<")";
-}
-
 //will return the keys
 vector<BEvent> get_events(int year){
+	//if wanted to do this the super-clean way, would have the parsing function seperate from the downloading.  
 	string url="http://www.thebluealliance.com/api/v1/events/list?year="+as_string(year);
 	json_spirit::Value value;
 	auto data=scrape_cached(url);
@@ -394,7 +325,14 @@ BEvent_details get_details(string const& event_code){
 				r.location=s();
 			}
 		}else if(n=="teams"){
-			r.teams=mapf([](string s){ return Team(s); },a());
+			r.teams=mapf(
+				[](string s){ return Team(s); },
+				filter(
+					//I don't know why this even shows up in the data.  It isn't put in for any matches or anything.
+					[](string s){ return s!="frc0"; },
+					a()
+				)
+			);
 		}else if(n=="key"){
 			r.key=s();
 		}else if(n=="year"){
@@ -411,113 +349,6 @@ BEvent_details get_details(string const& event_code){
 
 vector<BEvent_details> all_event_details(int year){
 	return mapf(get_details,get_event_keys(year));
-}
-
-//typedef string Competition_level;
-enum class Competition_level{QUALS,QUARTERS,SEMIS,FINALS};
-
-Maybe<Competition_level> parse_competition_level(string s){
-	#define X(name) if(toupper(s)==""#name) return Competition_level::name;
-	X(QUALS)
-	X(QUARTERS)
-	X(SEMIS)
-	X(FINALS)
-	#undef X
-	return Maybe<Competition_level>();
-}
-/*struct Competition_level{
-	string data;
-
-	Competition_level(){} //todo: delete this.
-	explicit Competition_level(string s):data(s){}
-	//operator string()const{ return data; }
-};
-
-bool operator==(Competition_level,Competition_level)nyi
-bool operator<(Competition_level a,Competition_level b){ return a.data<b.data; }
-*/
-ostream& operator<<(ostream& o,Competition_level c){
-	switch(c){
-		#define X(name) case Competition_level::name: return o<<""#name;
-		X(QUALS)
-		X(QUARTERS)
-		X(SEMIS)
-		X(FINALS)
-		#undef X
-		default: nyi
-	}
-}
-
-
-//struct Match_id
-
-struct Match_info{
-	int match_number;
-	int set_number;
-	Competition_level competition_level;
-	string key;
-	set<Team> teams; //warning: This is not accurate when just parsed in because doesn't work with "B" teams
-	struct Alliance{
-		int score;
-		vector<Team> teams;
-	};
-	map<string,Alliance> alliances;
-	string event;
-};
-
-ostream& operator<<(ostream& o,Match_info::Alliance const& a){
-	return o<<"Alliance("<<a.score<<" "<<a.teams<<")";
-}
-
-ostream& operator<<(ostream& o,Match_info const& m){
-	o<<"Match_info("<<m.key<<","<<m.match_number<<",";
-	o<<m.teams<<",";
-	o<<m.alliances;
-	return o<<")";
-}
-
-bool operator<(Match_info::Alliance const& a,Match_info::Alliance const& b){
-	#define X(name) if(a.name<b.name) return 1; if(b.name<a.name) return 0;
-	X(score);
-	X(teams);
-	#undef X
-	return 0;
-}
-
-set<Competition_level> competition_level(vector<Match_info> const& m){
-	set<Competition_level> r;
-	for(auto& a:m) r|=a.competition_level;
-	return r;
-}
-
-template<typename T>
-bool contains(set<T> const& s,T const& t){
-	return s.find(t)!=end(s);
-}
-
-template<typename T>
-set<T> symmetric_difference(set<T> const& a,set<T> const& b){
-	set<T> r;
-	for(auto elem:a){
-		if(!contains(b,elem)) r|=elem;
-	}
-	for(auto elem:b){
-		if(!contains(a,elem)) r|=elem;
-	}
-	return r;
-}
-
-bool ok(Match_info const& m){
-	set<Team> listed;
-	for(auto a:values(m.alliances)){
-		listed|=to_set(a.teams);
-	}
-	auto a=m.teams;
-	if(a!=listed){
-		//cout<<"Diff: "<<symmetric_difference(a,listed)<<"\n";
-		//exit(1);
-	}
-	return listed==a;
 }
 
 vector<string> get_array(json_spirit::Value const& v){
@@ -603,25 +434,6 @@ Match_info match_info(string const& match_key){
 	return r;
 }
 
-//This is rediculously inefficient, just in case you were wondering.
-template<typename T>
-set<T>& operator|=(set<T>& a,vector<T> const& b){ return a|=to_set(b); }
-
-set<Team> teams(Match_info const& m){
-	set<Team> r;
-	for(auto a:m.alliances){
-		//set<string> t1=a.second.teams;
-		r|=a.second.teams;
-	}
-	return r;
-}
-
-set<Team> teams(vector<Match_info> const& v){
-	set<Team> r;
-	for(auto a:v) r|=teams(a);
-	return r;
-}
-
 //opr: columns=teams,rows=present on this alliance?, vector=allaince score
 //ccwm: columns=teams,rows=(red?1:(blue?-1:0)), vector=red score-blue score
 
@@ -673,13 +485,6 @@ multiset<Regional_type> regional_types(int year){
 	));
 }
 
-template<typename T>
-vector<T> flatten(vector<vector<T>> const& v){
-	vector<T> r;
-	for(auto a:v) for(auto elem:a) r|=elem;
-	return r;
-}
-
 vector<string> match_keys(int year){
 	return flatten(mapf([](string s){ return get_details(s).matches; },get_event_keys(year)));
 }
@@ -688,97 +493,13 @@ vector<Match_info> matches(int year){
 	return mapf(match_info,match_keys(year));
 }
 
-template<typename Func,typename T>
-vector<T> filter(Func f,vector<T> const& in){
-	vector<T> r;
-	for(auto elem:in){
-		if(f(elem)) r|=elem;
-	}
-	return r;
-}
-
 vector<Match_info> matches(int year,Team team){
 	return filter([=](Match_info m)->bool{ return contains(m.teams,team); },matches(year));
-}
-
-vector<Match_info::Alliance> alliances(vector<Match_info> const& m){
-	return flatten(mapf([](Match_info m){ return values(m.alliances); },m));
-}
-
-vector<int> scores(vector<Match_info> const& m){
-	return mapf([](Match_info::Alliance m){ return m.score; },alliances(m));
 }
 
 vector<Match_info::Alliance> alliances(int year,Team team){
 	matches(year,team);
 	nyi
-}
-
-template<typename T>
-T max(vector<T> const& v){
-	T r=*begin(v);
-	for(auto a:v) r=max(r,a);
-	return r;
-}
-
-template<typename T>
-T min(vector<T> const& v){
-	T r=*begin(v);
-	for(auto a:v) r=min(r,a);
-	return r;
-}
-
-template<typename Func,typename T>
-T with_max(Func f,vector<T> const& v){
-	return max(mapf([&](T t){ return make_pair(f(t),t); },v)).second;
-}
-
-template<typename Func,typename T>
-T with_min(Func f,vector<T> const& v){
-	return min(mapf([&](T t){ return make_pair(f(t),t); },v)).second;
-}
-
-vector<Match_info::Alliance> winning_alliances(vector<Match_info> const& matches){
-	return mapf([](Match_info m)->Match_info::Alliance{
-		return with_max([](Match_info::Alliance m)->int{ return m.score; },values(m.alliances));
-	},matches);
-}
-
-vector<Match_info::Alliance> losing_alliances(vector<Match_info> const& m){
-	return mapf([](Match_info m)->Match_info::Alliance{
-		return with_min([](Match_info::Alliance m)->int{ return m.score; },values(m.alliances));
-	},m);
-}
-
-double sum(vector<int> const& v){
-	double t=0;
-	for(auto a:v) t+=a;
-	return t;
-}
-
-double mean(vector<int> const& v){
-	assert(v.size());
-	return sum(v)/v.size();
-}
-
-double mean_score(vector<Match_info::Alliance> const& v){
-	return mean(mapf([](Match_info::Alliance a){ return a.score; },v));
-}
-
-double median(vector<int> v){
-	sort(begin(v),end(v));
-	return v[v.size()/2];//could do the right thing when length is divisible by 2.
-}
-
-int mode(vector<int> const& v){
-	map<int,Default<int,0>> m;
-	for(auto a:v) m[a]++;
-	vector<pair<int,int>> vout;
-	for(auto p:m){
-		vout|=make_pair((int)p.second,p.first);
-	}
-	sort(begin(vout),end(vout));
-	return vout[vout.size()-1].second;
 }
 
 #define RM_REF(X) typename remove_reference<X>::type
@@ -1008,273 +729,3 @@ string team_page(Team team){
 	));
 }
 
-//should probably move to util
-string join(vector<string> const& v,char c){
-	stringstream ss;
-	for(unsigned i=0;i+1<v.size();i++){
-		ss<<v[i]<<c;
-	}
-	if(v.size()){
-		ss<<v[v.size()-1];
-	}
-	return ss.str();
-}
-
-//aka cdr
-template<typename T>
-vector<T> tail(vector<T> const& v){
-	vector<T> r;
-	for(unsigned i=1;i<v.size();i++){
-		r|=v[i];
-	}
-	return r;
-}
-
-//should probably move to util
-map<string,string> env_vars(char **envp){
-	assert(envp);
-	map<string,string> r;
-	for(char **env=envp;*env;env++){
-		string e=*env;
-		auto sp=split(e,'=');
-		r[sp[0]]=join(tail(sp),'=');
-	}
-	return r;
-}
-
-//should probably move to util
-vector<string> args(int argc,char **argv){
-	vector<string> r;
-	for(unsigned i=1;i<argc;i++) r|=string(argv[i]);
-	return r;
-}
-
-enum class Listing_type{TEAM,EVENT,MATCH};
-
-//this might change to a map to a vector of string at some point.
-map<string,vector<string>> get_flags(vector<string> args){
-	auto flag=mapf(
-		[](string s)->Maybe<string>{
-			if(prefix(s,"--")){
-				return string(s.c_str()+2);
-			}else{
-				return Maybe<string>();
-			}
-		},
-		args
-	);
-	flag|=Maybe<string>("Ignore");
-	map<string,vector<string>> r;
-	for(unsigned i=0;i<args.size();i++){
-		if(flag[i]){
-			auto name=*flag[i];
-			if(flag[i+1]){
-				r[name];
-			}else{
-				r[name]|=args[i+1];
-				i++;
-			}
-		}else{
-			//probably should just go into an argument list...
-			nyi
-		}
-	}
-	return r;
-}
-
-set<string> events(vector<Match_info> const& v){
-	set<string> r;
-	for(auto a:v) r|=a.event;
-	return r;
-}
-
-template<typename T>
-Maybe<T> operator&(set<T> s,T t){
-	if(contains(s,t)){
-		return t;
-	}
-	return Maybe<T>();
-}
-
-template<typename T>
-vector<T>& operator|=(vector<T> &v,vector<T> a){
-	for(auto elem:a) v|=elem;
-	return v;
-}
-
-template<typename K,typename V>
-set<K> keys(map<K,V> const& m){
-	set<K> r;
-	for(auto p:m) r|=p.first;
-	return r;
-}
-
-template<typename T>
-set<T> a_and_not_b(set<T> const& a,set<T> const& b){
-	set<T> r;
-	for(auto elem:a){
-		if(b.find(elem)==b.end()){
-			r|=elem;
-		}
-	}
-	return r;
-}
-
-int run_main(map<string,vector<string>> flags){
-	set<string> flags_used;
-	auto get_flag=[&](string name)->Maybe<vector<string>>{
-		auto f=flags.find(name);
-		if(f==flags.end()) return Maybe<vector<string>>();
-		flags_used|=name;
-		return Maybe<vector<string>>(f->second);
-	};
-	auto get_flag_default=[&](string name,string default_value)->vector<string>{
-		auto f=get_flag(name);
-		if(!f) return vector<string>{default_value};
-		return *f;
-	};
-
-	auto y=get_flag_default("year","2013");
-	vector<Match_info> m;
-	for(auto year_str:y){
-		int year=atoi(year_str.c_str());
-		m|=matches(year);
-	}
-
-	auto b=get_flag("team");
-	if(b){
-		for(auto f:*b){
-			Team team{f};
-			m=filter([&](Match_info const& m){ return teams(m)&team; },m);
-		}
-	}
-
-	auto c=get_flag("competition_level");
-	if(c){
-		for(auto f:*c){
-			auto p=parse_competition_level(f);
-			if(!p){
-				cout<<"Error: Could not parse to a competition level: \""<<f<<"\"\n";
-				return 1;
-			}
-			auto level=*p;
-			m=filter([&](Match_info const& m){ return m.competition_level==level; },m);
-		}
-	}
-
-	auto d=get_flag("event");
-	if(d){
-		for(auto f:*d){
-			m=filter([&](Match_info const& m){ return m.event==f; },m);
-		}
-	}
-
-	if(get_flag("matches")){
-		//cout<<m<<"\n";
-		for(auto a:m){
-			cout<<a<<"\n";
-		}
-	}
-
-	if(get_flag("averages")){
-		cout<<"mean="<<mean(scores(m))<<"\n";
-		cout<<"median="<<median(scores(m))<<"\n";
-		cout<<"mode="<<mode(scores(m))<<"\n";
-		cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
-		cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
-	}
-	if(get_flag("teams")){
-		cout<<teams(m)<<"\n";
-	}
-	if(get_flag("team_count")){
-		cout<<"Teams: "<<teams(m).size()<<"\n";
-	}
-	if(get_flag("events")){
-		cout<<events(m)<<"\n";
-	}
-	if(get_flag("event_count")){
-		cout<<"Events: "<<events(m).size()<<"\n";
-	}
-	if(get_flag("competition_levels")){
-		cout<<competition_level(m)<<"\n";
-	}
-	auto unused=a_and_not_b(keys(flags),flags_used);
-	if(unused.size()){
-		cout<<"Error: Unused flags:"<<unused<<"\n";
-		return 1;
-	}
-
-	return 0;
-}
-
-//takes about 5 minutes to get all the details on the events, then extra time beyond that to get the matches.
-int main(int argc,char **argv,char **envp){
-	auto env=env_vars(envp);
-	auto f=env.find("QUERY");
-	if(f!=env.end()){ //this is for if you want to run the program as a cgi script
-		map<string,vector<string>> flags;
-		mapf(
-			[&flags](string s){
-				auto sp=split(s,'=');
-				if(sp.size()==1){
-					flags[sp[0]]=vector<string>();
-					return 0;
-				}
-				if(sp.size()==2){
-					flags[sp[0]]|=sp[1];
-				}
-				nyi //should probably just join all the other things back together.
-			},
-			split(f->second,'&')
-		);
-		return run_main(flags);
-	}
-	return run_main(get_flags(args(argc,argv)));
-
-	cout<<team_basic(Team("frc1425"))<<"\n";
-	//t();
-	//return 0;
-
-	int year=2013;
-	auto m=matches(year);
-	//cout<<alliances(m).size()<<"\n";
-	cout<<"mean="<<mean(scores(m))<<"\n";
-	cout<<"median="<<median(scores(m))<<"\n";
-	cout<<"mode="<<mode(scores(m))<<"\n";
-	cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
-	cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
-	return 0;
-	cout<<regional_types(2012)<<"\n";
-	cout<<regional_types(2013)<<"\n";
-	//cout<<matches(2013)<<"\n";
-	for(auto elem:matches(2012,Team("frc1425"))){
-		cout<<elem<<"\n";
-	}
-//	match_info();
-	return 0;
-
-	auto keys=get_event_keys(2013);
-	cout<<"got keys\n";
-	for(auto key:keys){
-		auto det=get_details(key);
-		cout<<det<<"\n";
-		for(auto match:det.matches){
-			cout<<"match="<<match<<"\n";
-			cout<<"mi="<<match_info(match)<<"\n";
-		}
-		cout<<"here3\n";
-	}
-	//todo: some basic sanity checks, like the team list looks like the set of teams in the matches.
-	return 0;
-	//cout<<get_events();
-	return 0;
-
-	//cout<<split_on("this is that thing.","t");
-	//return 0;
-	cout<<events()<<"\n";
-	for(auto event:events()){
-		cout<<event<<" "<<scrape_cached(event.url);
-	}
-	//get_details
-	return 0;
-}

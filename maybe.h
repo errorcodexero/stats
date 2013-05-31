@@ -2,6 +2,7 @@
 #define MAYBE_H
 
 #include<cassert>
+#include<iostream>
 
 template<typename T>
 class Maybe{

@@ -1,5 +1,7 @@
-scraper: exception.cpp scrape.cpp str.cpp util.cpp
-	g++ -O3 --std=c++0x -o scraper exception.cpp scrape.cpp str.cpp util.cpp -ljson_spirit
+CFILES=match_info.cpp main.cpp scrape.cpp exception.cpp str.cpp util.cpp team.cpp bevent.cpp
+
+scraper: $(CFILES)
+	g++ -O3 --std=c++0x -o scraper $(CFILES) -ljson_spirit
 
 .PHONY: clean
 clean:

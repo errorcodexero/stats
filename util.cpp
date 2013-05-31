@@ -2,6 +2,8 @@
 #include<fcntl.h>
 #include<cassert>
 #include<unistd.h>
+#include<algorithm>
+#include "default.h"
 
 using namespace std;
 
@@ -74,4 +76,42 @@ vector<string> lines(string const& s){
 	}
 	r.push_back(string(begin,at));
 	return r;
+}
+
+double sum(vector<int> const& v){
+	double t=0;
+	for(auto a:v) t+=a;
+	return t;
+}
+
+double mean(vector<int> const& v){
+	assert(v.size());
+	return sum(v)/v.size();
+}
+
+double median(vector<int> v){
+	sort(begin(v),end(v));
+	return v[v.size()/2];//could do the right thing when length is divisible by 2.
+}
+
+int mode(vector<int> const& v){
+	map<int,Default<int,0>> m;
+	for(auto a:v) m[a]++;
+	vector<pair<int,int>> vout;
+	for(auto p:m){
+		vout|=make_pair((int)p.second,p.first);
+	}
+	sort(begin(vout),end(vout));
+	return vout[vout.size()-1].second;
+}
+
+std::string join(std::vector<std::string> const& v,char c){
+	std::stringstream ss;
+	for(unsigned i=0;i+1<v.size();i++){
+		ss<<v[i]<<c;
+	}
+	if(v.size()){
+		ss<<v[v.size()-1];
+	}
+	return ss.str();
 }

@@ -8,7 +8,11 @@
 
 class Team;
 
-enum class Competition_level{QUALS,QUARTERS,SEMIS,FINALS};
+enum class Competition_level{
+	QUALS,
+	EIGHTHS, //This actually shows up in some of the The Blue Alliance data.
+	QUARTERS,SEMIS,FINALS
+};
 
 Maybe<Competition_level> parse_competition_level(std::string);
 std::ostream& operator<<(std::ostream& o,Competition_level);
@@ -41,7 +45,7 @@ std::set<Team> teams(std::vector<Match_info> const&);
 std::vector<int> scores(std::vector<Match_info> const&);
 std::vector<Match_info::Alliance> winning_alliances(std::vector<Match_info> const& matches);
 std::vector<Match_info::Alliance> losing_alliances(std::vector<Match_info> const& m);
-double mean_score(std::vector<Match_info::Alliance> const& v);
+Maybe<double> mean_score(std::vector<Match_info::Alliance> const& v);
 std::vector<Match_info::Alliance> alliances(std::vector<Match_info> const&);
 
 #endif

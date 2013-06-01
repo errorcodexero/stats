@@ -216,11 +216,22 @@ vector<BEvent> get_events(int year){
 			//cout<<elem<<"\n";
 			auto n=elem.name_;
 			auto val=elem.value_;
-			auto v=[&](){ return val.get_str(); };
+			auto v=[&](){
+				try{
+					return val.get_str();
+				}catch(...){
+					cout<<"Expected string!"<<val<<"\n";
+					throw;
+				}
+			};
+			auto maybe_str=[&](){
+				if(val.type()==json_spirit::null_type) return Maybe<string>();
+				return Maybe<string>(v());
+			};
 			if(n=="name"){
-				b.name=v(); //r|=elem.value_.get_str();
+				b.name=v();
 			}else if(n=="end_date"){
-				b.end_date=v();
+				b.end_date=maybe_str();
 			}else if(n=="official"){
 				switch(val.type()){
 					case json_spirit::bool_type:
@@ -232,14 +243,12 @@ vector<BEvent> get_events(int year){
 					default:
 						nyi
 				}
-				//b.official=v.get_bool();
 			}else if(n=="short_name"){
-				if(val.type()==json_spirit::null_type) continue;
-				b.name_short=v();
+				b.name_short=maybe_str();
 			}else if(n=="key"){
 				b.key=v();
 			}else if(n=="start_date"){
-				b.start_date=v();
+				b.start_date=maybe_str();
 			}else{
 				cout<<"Got "<<n<<"\n";
 				nyi
@@ -256,6 +265,7 @@ vector<string> get_event_keys(int year){
 	for(auto a:get_events(year)){
 		r|=a.key;
 	}
+	//cout<<"got event ekys\n";
 	return r;
 }
 
@@ -264,12 +274,13 @@ struct BEvent_details{
 	Maybe<string> location;
 	string key;
 	string year;//could actually make this an int
-	string start_date,name;
+	Maybe<string> start_date;
+	string name;
 	vector<Team> teams;
 	bool official;
 	vector<string> matches;
 	string event_code;
-	string end_date;
+	Maybe<string> end_date;
 	Maybe<string> name_short;
 	Maybe<bool> facebook_eid; //fix the type of this.
 };
@@ -289,7 +300,20 @@ BEvent_details get_details(string const& event_code){
 		//cout<<"p="<<p<<"\n";
 		auto n=p.name_;
 		auto v=p.value_;
-		auto s=[&](){ return v.get_str(); };
+
+		auto s=[&](){
+			try{
+				return v.get_str();
+			}catch(...){
+				cout<<"Expected string, got:"<<v<<"\n";
+				throw;
+			}
+		};
+		auto ms=[&](){
+			if(v.type()==json_spirit::null_type) return Maybe<string>();
+			return Maybe<string>(s());
+		};
+
 		auto a=[&](){
 			vector<string> r;
 			for(auto elem:v.get_array()) r|=elem.get_str();
@@ -298,9 +322,9 @@ BEvent_details get_details(string const& event_code){
 		if(n=="event_code"){
 			r.event_code=s();
 		}else if(n=="start_date"){
-			r.start_date=s();
+			r.start_date=ms();
 		}else if(n=="end_date"){
-			r.end_date=s();
+			r.end_date=ms();
 		}else if(n=="short_name"){
 			if(v.type()!=json_spirit::null_type){
 				r.name_short=s();
@@ -359,6 +383,30 @@ vector<string> get_array(json_spirit::Value const& v){
 	return r;
 }
 
+template<typename A,typename B>
+class Either{
+	bool first_;
+	A a_;
+	B b_;
+
+	public:
+	Either(A a):first_(1),a_(a){}
+	Either(B b):first_(0),b_(b){}
+
+	bool first()const{ return first_; }
+	operator bool()const{ return first_; }
+
+	A const& a()const{
+		assert(first_);
+		return a;
+	}
+
+	B const& b()const{
+		assert(!first_);
+		return b;
+	}
+};
+
 //example input: 2010cmp_f1m1
 Match_info match_info(string const& match_key){
 	//cout<<"going to ...\n";
@@ -381,7 +429,12 @@ Match_info match_info(string const& match_key){
 		}else if(n=="set_number"){
 			r.set_number=v.get_int();
 		}else if(n=="competition_level"){
-			r.competition_level=*parse_competition_level(s());
+			auto p=parse_competition_level(s());
+			if(!p){
+				cout<<"Invalid competition level:"<<s()<<"\n";
+				nyi
+			}
+			r.competition_level=*p;
 		}else if(n=="key"){
 			r.key=s();
 		}else if(n=="alliances"){
@@ -490,6 +543,7 @@ vector<string> match_keys(int year){
 }
 
 vector<Match_info> matches(int year){
+	//this could be parellized without too much trouble.
 	return mapf(match_info,match_keys(year));
 }
 

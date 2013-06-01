@@ -84,17 +84,19 @@ double sum(vector<int> const& v){
 	return t;
 }
 
-double mean(vector<int> const& v){
-	assert(v.size());
+Maybe<double> mean(vector<int> const& v){
+	if(!v.size()) return Maybe<double>();
 	return sum(v)/v.size();
 }
 
-double median(vector<int> v){
+Maybe<double> median(vector<int> v){
+	if(!v.size()) return Maybe<double>();
 	sort(begin(v),end(v));
 	return v[v.size()/2];//could do the right thing when length is divisible by 2.
 }
 
-int mode(vector<int> const& v){
+Maybe<int> mode(vector<int> const& v){
+	if(!v.size()) return Maybe<int>();
 	map<int,Default<int,0>> m;
 	for(auto a:v) m[a]++;
 	vector<pair<int,int>> vout;

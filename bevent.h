@@ -8,7 +8,8 @@
 struct BEvent{
 	std::string name;
 	Maybe<std::string> name_short;
-	std::string start_date,end_date;
+	Maybe<std::string> start_date;
+	Maybe<std::string> end_date;
 	bool official;
 	std::string key;
 };

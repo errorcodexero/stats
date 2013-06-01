@@ -11,6 +11,7 @@ using namespace std;
 Maybe<Competition_level> parse_competition_level(string s){
 	#define X(name) if(toupper(s)==""#name) return Competition_level::name;
 	X(QUALS)
+	X(EIGHTHS)
 	X(QUARTERS)
 	X(SEMIS)
 	X(FINALS)
@@ -22,6 +23,7 @@ ostream& operator<<(ostream& o,Competition_level c){
 	switch(c){
 		#define X(name) case Competition_level::name: return o<<""#name;
 		X(QUALS)
+		X(EIGHTHS)
 		X(QUARTERS)
 		X(SEMIS)
 		X(FINALS)
@@ -116,18 +118,20 @@ vector<int> scores(vector<Match_info> const& m){
 }
 
 vector<Match_info::Alliance> winning_alliances(vector<Match_info> const& matches){
+	//Note that this is not strictly correct as it includes some ties
 	return mapf([](Match_info m)->Match_info::Alliance{
 		return with_max([](Match_info::Alliance m)->int{ return m.score; },values(m.alliances));
 	},matches);
 }
 
 vector<Match_info::Alliance> losing_alliances(vector<Match_info> const& m){
+	//Note that this is not strictly correct as it includes some ties.
 	return mapf([](Match_info m)->Match_info::Alliance{
 		return with_min([](Match_info::Alliance m)->int{ return m.score; },values(m.alliances));
 	},m);
 }
 
-double mean_score(vector<Match_info::Alliance> const& v){
+Maybe<double> mean_score(vector<Match_info::Alliance> const& v){
 	return mean(mapf([](Match_info::Alliance a){ return a.score; },v));
 }
 

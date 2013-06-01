@@ -136,8 +136,8 @@ std::string cat(std::string const&,std::string const&);
 std::string cat(std::string const&,char);
 std::string cat(char,char);
 std::vector<std::string> lines(std::string const&);
-double mean(std::vector<int> const&);
-double median(std::vector<int>);
-int mode(std::vector<int> const&);
+Maybe<double> mean(std::vector<int> const&);
+Maybe<double> median(std::vector<int>);
+Maybe<int> mode(std::vector<int> const&);
 
 #endif

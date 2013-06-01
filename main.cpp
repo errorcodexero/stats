@@ -1,9 +1,11 @@
+#include<tuple>
 #include "str.h"
 #include "util.h"
 #include "set.h"
 #include "scrape.h"
 #include "map.h"
 #include "team.h"
+#include "record.h"
 
 using namespace std;
 
@@ -63,6 +65,66 @@ set<string> events(vector<Match_info> const& v){
 	set<string> r;
 	for(auto a:v) r|=a.event;
 	return r;
+}
+
+map<Team,Record> calculate_records(vector<Match_info> m){
+	map<Team,Record> r;
+	for(Match_info match:m){
+		auto v=values(match.alliances);
+		auto scores=mapf([](Match_info::Alliance a){ return a.score; },v);
+		assert(scores.size()==2); //not dealing with more than two alliances at the moment.  
+		if(scores[0]==scores[1]){
+			auto tie=[&](Team t){ return r[t].tie++; };
+			mapf(tie,teams(match));
+		}else{
+			auto win=[&](Team t){ return r[t].win++; };
+			auto loss=[&](Team t){ return r[t].loss++; };
+			auto teams=mapf([](Match_info::Alliance a){ return a.teams; },v);
+			if(scores[0]>scores[1]){
+				mapf(win,teams[0]);
+				mapf(loss,teams[1]);
+			}else{
+				mapf(loss,teams[0]);
+				mapf(win,teams[1]);
+			}
+		}
+	}
+	return r;
+}
+
+template<typename K,typename V>
+vector<pair<K,V>> to_pairs(map<K,V> m){
+	vector<pair<K,V>> r;
+	for(auto p:m) r|=p;
+	return r;
+}
+
+//just doing 3-tuples for now.  Variable amounts of template arguments will have to wait for the moment.  
+template<typename T1,typename T2,typename T3>
+ostream& operator<<(ostream& o,tuple<T1,T2,T3> t){
+	o<<"(";
+	//o<<tuple_size<decltype(t)>::value;
+	o<<get<0>(t)<<",";
+	o<<get<1>(t)<<",";
+	o<<get<2>(t);
+	return o<<")";
+}
+
+template<typename Tuple,int COL>
+bool tcmp(Tuple a,Tuple b){
+	return get<COL>(a)<get<COL>(b);
+}
+
+template<typename Tuple,int COL>
+vector<Tuple> sort_tuples(vector<Tuple> v){
+	//eh...this might get pretty annoying to implement pretty fast.
+	sort(begin(v),end(v),tcmp<Tuple>);
+	return v;
+}
+
+template<typename Collection>
+void print_table(Collection c){
+	for(auto a:c) cout<<a<<"\n";
 }
 
 int run_main(map<string,vector<string>> flags){
@@ -127,6 +189,15 @@ int run_main(map<string,vector<string>> flags){
 		cout<<"mode="<<mode(scores(m))<<"\n";
 		cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
 		cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
+	}
+	if(get_flag("records")){
+		auto c=calculate_records(m);
+		auto rec=mapf([](pair<Team,Record> p){ return make_tuple(p.first,p.second,win_portion(p.second)); },c);
+		//cout<<rec<<"\n";
+		for(auto a:c){
+			//cout<<make_tuple(a.first,a.second,win_portion(a.second))<<"\n";
+			cout<<a.first<<"\t"<<a.second<<"\t"<<win_portion(a.second)<<"\n";
+		}
 	}
 	if(get_flag("teams")){
 		cout<<teams(m)<<"\n";

@@ -1,8 +1,15 @@
-CFILES=record.cpp match_info.cpp main.cpp scrape.cpp exception.cpp str.cpp util.cpp team.cpp bevent.cpp
+SHELL=/bin/bash
+CFLAGS=-O3 --std=c++0x
+DEPS=*.h
+CFILES=$(shell ls *.cpp)
+OBJ=$(CFILES:cpp=o)
 
-scraper: $(CFILES)
-	g++ -O3 --std=c++0x -o scraper $(CFILES) -ljson_spirit
+%.o: %.cpp $(DEPS)
+	$(CXX) -c -o $@ $< $(CFLAGS)
+
+scraper: $(OBJ)
+	$(CXX) $(CFLAGS) -o scraper $(OBJ) -ljson_spirit
 
 .PHONY: clean
 clean:
-	rm -f scraper
+	rm -f scraper $(OBJ)

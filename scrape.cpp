@@ -745,13 +745,6 @@ ostream& operator<<(ostream& o,BTeam_details const& b){
 
 BTeam_details team_details(Team team)nyi
 
-//if wanted to be fancier, would actually make this be a structure and then have a way to turn it into a string.
-string tag(string name,string body){
-	stringstream ss;
-	ss<<"<"<<name<<">"<<body<<"</"<<name<<">";
-	return ss.str();
-}
-
 template<typename T>
 struct Tag{
 	string name;

@@ -117,3 +117,15 @@ std::string join(std::vector<std::string> const& v,char c){
 	}
 	return ss.str();
 }
+
+vector<int> quartiles(vector<int> v){
+	sort(begin(v),end(v));
+	if(!v.size()) return vector<int>();
+	return vector<int>{v[0],v[v.size()/4],v[v.size()/2],v[v.size()*3/4],v[v.size()-1]};
+}
+
+string tag(string const& tag,string const& body){
+	stringstream ss;
+	ss<<"<"<<tag<<">"<<body<<"</"<<tag<<">";
+	return ss.str();
+}

@@ -5,30 +5,39 @@
 
 using namespace std;
 
-Team::Team(string a):b(0){
+Team::Team(string a){
 	if(prefix(a,"frc")) a=a.substr(3,a.size()-3);
 	assert(a.size());
 	char c=a[a.size()-1];
+	bool b=0;
 	if(c=='b'){
 		b=1;
 		a=a.substr(0,a.size()-1);
 	}
 	data=atoi(a.c_str());
 	assert(data);
+	if(b) data|=0x4000;
 }
 
-ostream& operator<<(ostream& o,Team const& t){
-	o<<t.data;
-	if(t.b) o<<"b";
+short Team::num()const{ return data&0x3fff; }
+bool Team::b()const{ return data&0x4000; }
+
+ostream& operator<<(ostream& o,Team t){
+	o<<t.num();
+	if(t.b()) o<<"b";
 	return o;
 }
 
-bool operator<(Team const& a,Team const& b){
-	if(a.data<b.data) return 1;
-	if(a.data>b.data) return 0;
-	return a.b<b.b;
+bool operator<(Team a,Team b){ return a.data<b.data; }
+
+bool operator>(Team a,Team b){
+	return b<a;
 }
 
-bool operator==(Team const& a,Team const& b){
-	return a.data==b.data && a.b==b.b;
+bool operator==(Team a,Team b){
+	return a.data==b.data;
+}
+
+bool operator!=(Team a,Team b){
+	return !(a==b);
 }

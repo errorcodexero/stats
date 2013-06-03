@@ -70,20 +70,6 @@ bool ok(Match_info const& m){
 	return listed==a;
 }
 
-template<typename T>
-T max(vector<T> const& v){
-	T r=*begin(v);
-	for(auto a:v) r=max(r,a);
-	return r;
-}
-
-template<typename T>
-T min(vector<T> const& v){
-	T r=*begin(v);
-	for(auto a:v) r=min(r,a);
-	return r;
-}
-
 template<typename Func,typename T>
 T with_max(Func f,vector<T> const& v){
 	return max(mapf([&](T t){ return make_pair(f(t),t); },v)).second;

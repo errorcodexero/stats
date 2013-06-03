@@ -8,6 +8,7 @@
 #include<map>
 #include<vector>
 #include<set>
+#include<algorithm>
 #include "exception.h"
 #include "maybe.h"
 
@@ -88,9 +89,9 @@ auto mapf(Func f,Collection const& c)->std::vector<decltype(f(*begin(c)))>{
 	return r;
 }
 
-template<typename Func,typename T>
-std::vector<T> filter(Func f,std::vector<T> const& in){
-	std::vector<T> r;
+template<typename Func,typename Collection>
+Collection filter(Func f,Collection const& in){
+	Collection r;
 	for(auto elem:in){
 		if(f(elem)) r|=elem;
 	}
@@ -128,6 +129,30 @@ std::vector<T> flatten(std::vector<std::vector<T>> const& v){
 	return r;
 }
 
+template<typename T>
+bool contains(std::vector<T> const& v,T t){
+	for(auto a:v){
+		if(a==t) return 1;
+	}
+	return 0;
+}
+
+template<typename T>
+T max(std::vector<T> const& v){
+	T r=*begin(v);
+	for(auto a:v) r=std::max(r,a);
+	return r;
+}
+
+template<typename T>
+T min(std::vector<T> const& v){
+	T r=*begin(v);
+	for(auto a:v) r=std::min(r,a);
+	return r;
+}
+
+std::string tag(std::string const&,std::string const&);
+
 void tab(std::ostream& o,unsigned i);
 std::string slurp(std::string const& filename);
 void write_out(std::string const& filename,std::string const& data);
@@ -139,5 +164,6 @@ std::vector<std::string> lines(std::string const&);
 Maybe<double> mean(std::vector<int> const&);
 Maybe<double> median(std::vector<int>);
 Maybe<int> mode(std::vector<int> const&);
+std::vector<int> quartiles(std::vector<int>);
 
 #endif

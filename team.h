@@ -4,19 +4,23 @@
 #include<string>
 
 class Team{
-	unsigned data;
-	bool b;
+	short data;
+
+	short num()const;
+	bool b()const;
 
 	public:
 	explicit Team(std::string);
 
-	friend std::ostream& operator<<(std::ostream&,Team const&);
-	friend bool operator<(Team const&,Team const&);
-	friend bool operator==(Team const&,Team const&);
+	friend std::ostream& operator<<(std::ostream&,Team);
+	friend bool operator<(Team,Team);
+	friend bool operator==(Team,Team);
 };
 
-std::ostream& operator<<(std::ostream&,Team const&);
-bool operator<(Team const&,Team const&);
-bool operator==(Team const&,Team const&);
+std::ostream& operator<<(std::ostream&,Team);
+bool operator<(Team,Team);
+bool operator>(Team,Team);
+bool operator==(Team,Team);
+bool operator!=(Team,Team);
 
 #endif

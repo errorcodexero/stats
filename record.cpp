@@ -1,9 +1,18 @@
 #include "record.h"
 #include<iostream>
+#include "util.h"
 
 using namespace std;
 
 Record::Record():win(0),loss(0),tie(0){}
+Record::Record(unsigned a,unsigned b,unsigned c):win(a),loss(b),tie(c){}
+
+Record& Record::operator+=(Record a){
+	win+=a.win;
+	loss+=a.loss;
+	tie+=a.tie;
+	return *this;
+}
 
 unsigned sum(Record r){
 	return r.win+r.loss+r.tie;
@@ -21,8 +30,21 @@ double win_portion(Record r){
 	return .5*points(r)/s;
 }
 
+Record reversed(Record a){
+	return Record(a.loss,a.win,a.tie);
+}
+
+bool operator==(Record a,Record b){
+	return a.win==b.win && a.loss==b.loss && a.tie==b.tie;
+}
+
 bool operator<(Record a,Record b){
-	return points(a)<points(b);
+	auto ap=points(a),bp=points(b);
+	#define X(v1,v2) if(v1<v2) return 1; if(v2<v1) return 0;
+	X(ap,bp);
+	X(a.win,b.win)
+	#undef X
+	return a.loss>b.loss;
 }
 
 ostream& operator<<(ostream& o,Record r){

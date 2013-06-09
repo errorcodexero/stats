@@ -3,6 +3,7 @@
 
 #include<set>
 #include<iostream>
+#include "util.h"
 
 template<typename T>
 std::ostream& operator<<(std::ostream& o,std::set<T> const& s){
@@ -50,6 +51,13 @@ std::set<T> symmetric_difference(std::set<T> const& a,std::set<T> const& b){
 	}
 	return r;
 }
+
+/*template<typename Collection>
+auto to_set(Collection const& v)->std::set<ELEMENT(v)>{
+	std::set<ELEMENT(v)> r;
+	for(auto e:v) r|=e;
+	return r;
+}*/
 
 template<typename T>
 std::set<T> to_set(std::vector<T> const& v){

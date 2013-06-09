@@ -10,6 +10,7 @@
 #include "record.h"
 #include "default.h"
 #include "limited_vector.h"
+#include "pick.h"
 
 using namespace std;
 
@@ -216,13 +217,6 @@ ostream& operator<<(ostream& o,Match_result m){
 	}
 }
 
-template<typename T,unsigned N>
-ostream& operator<<(ostream& o,array<T,N> a){
-	o<<"[ ";
-	for(auto elem:a) o<<elem<<" ";
-	return o<<"]";
-}
-
 struct Simple_match{
 	array<unsigned,2> score;
 	array<Limited_vector<Team,3>,2> teams;
@@ -325,14 +319,6 @@ vector<pair<Team,Team>> mates(Match_info::Alliance a){
 	return r;
 }
 
-//could also do a multiset...
-template<typename T>
-map<T,Default<unsigned,0>> count(vector<T> v){
-	map<T,Default<unsigned,0>> r;
-	for(auto a:v) r[a]++;
-	return r;
-}
-
 template<typename T>
 map<unsigned,vector<T>> count2(vector<T> v){
 	map<unsigned,vector<T>> r;
@@ -349,6 +335,13 @@ vector<T> reverse(set<T> s){
 	for(int i=r1.size()-1;i>=0;i--){
 		r|=r1[i];
 	}
+	return r;
+}
+
+template<typename T,unsigned LEN>
+set<T> to_set(array<T,LEN> a){
+	set<T> r;
+	for(auto elem:a) r|=elem;
 	return r;
 }
 
@@ -552,6 +545,187 @@ vector<T> reversed(vector<T> v){
 	return r;
 }
 
+string to_event_key(string s){
+	return string("2013")+tolower(s);
+}
+
+template<typename T>
+pair<set<T>,set<T>> uniques(set<T> a,set<T> b){
+	return make_pair(a_and_not_b(a,b),a_and_not_b(b,a));
+}
+
+//should probably move this to a header someplace
+typedef string Event_key;
+
+//returns 0-based number
+unsigned alliance_number(unsigned qf_number /*one-based*/,string side_name){
+	bool red;
+	if(side_name=="red") red=1;
+	else if(side_name=="blue") red=0;
+	else nyi
+
+	switch(qf_number){
+		case 1: return red?0:7;
+		case 2: return red?3:4;
+		case 3: return red?1:6;
+		case 4: return red?2:5;
+		default:
+			assert(false);
+	}
+}
+
+map<Event_key,array<set<Team>,8>> finals_alliances(vector<Match_info> m){
+	map<Event_key,array<set<Team>,8>> r;
+	for(auto match:m){
+		if(match.competition_level!=Competition_level::QUARTERS) continue;
+		if(match.match_number!=1){
+			continue;//(maybe a backup won't be called yet?)
+		}
+		//cout<<"key="<<match.key<<"\n";
+		//cout<<match.match_number<<" "<<match.set_number<<" "<<match.key<<"\n";
+		for(auto p:match.alliances){
+			auto side=p.first;
+			auto team_set=to_set(p.second.teams);
+			auto n=alliance_number(match.set_number,side);
+			set<Team> &teams=r[match.event][n];
+			if(teams.size()){
+				if(teams!=team_set){
+					cout<<"Teams="<<teams<<"\n";
+					cout<<"temss="<<team_set<<"\n";
+				}
+				assert(teams==team_set);
+			}else{
+				teams=team_set;
+			}
+		}
+	}
+	return r;
+}
+
+vector<Match_info> eliminations(vector<Match_info> m){
+	return filter([](Match_info m){ return m.competition_level!=Competition_level::QUALS; },m);
+}
+
+struct Elim_matchup{
+	vector<Match_info> v; //where event, etc, are all the same.
+};
+
+struct Elimination_competition_level{
+	Competition_level data;
+
+	operator Competition_level()const{ return data; }
+};
+
+//might be useful to have a version of this that didn't require them to be elimination matches.
+struct Elim_set{
+	string event_code;
+	Elimination_competition_level level;
+	int set_number;
+};
+
+bool operator==(Elim_set a,Elim_set b){
+	return a.event_code==b.event_code && a.level==b.level && a.set_number==b.set_number;
+}
+
+bool operator<(Elim_set a,Elim_set b){
+	return make_tuple(a.event_code,a.level,a.set_number)<make_tuple(b.event_code,b.level,b.set_number);
+}
+
+ostream& operator<<(ostream& o,Elim_set e){
+	return o<<"Elim_set("<<e.event_code<<" "<<e.level<<" "<<e.set_number<<")";
+}
+
+Maybe<Elim_set> elim_set(Match_info m){
+	if(m.competition_level==Competition_level::QUALS) return Maybe<Elim_set>();
+	return Elim_set{m.event,Elimination_competition_level{m.competition_level},m.set_number};
+}
+
+map<Event_key,array<vector<set<Team>>,8>> finals_alliance_combinations(vector<Match_info> m){
+	//for(auto a:to_set(mapf(elim_set,m))) cout<<"== "<<a<<"\n";
+	auto grouped=segregate(elim_set,m);
+	//for(auto a:grouped) cout<<a<<"\n";
+	auto mm=mapf(
+		[](pair<Maybe<Elim_set>,vector<Match_info>> p){ return p.second.size(); },
+		grouped
+	);
+	cout<<"Number of times that a series was certain # of games:"<<count(mm)<<"\n";
+	auto x=to_set(mapf(elim_set,m));
+	cout<<x<<"\n";
+	nyi
+
+	map<Event_key, array<vector<set<Team>>,8> > r;
+	for(auto match:eliminations(m)){
+		for(auto p:match.alliances){
+			auto side=p.first;
+			auto team_set=to_set(p.second.teams);
+			//TODO: Fix this logic about what alliance # it is.  This function only works for the quarter-finals
+			auto n=alliance_number(match.set_number,side);
+			r[match.event][n]|=team_set;
+		}
+	}
+	return r;
+}
+
+template<typename T>
+set<T> flatten(vector<set<T>> v){
+	set<T> r;
+	for(auto a:v) r|=a;
+	return r;
+}
+
+template<typename T>
+void chart_membership(vector<set<T>> v){
+	cout<<"\t"<<flatten(v)<<"\n";
+	//nyi
+}
+
+void correlate_picks(){
+	auto f=finals_alliance_combinations(matches(2013));
+	//cout<<f<<"\n";
+	for(auto p:f){
+		cout<<p.first<<"\n";
+		for(auto a:p.second){
+			chart_membership(a);
+		}
+	}
+
+	auto p1=parse_picks();
+	map<Event_key,Event_picks> p;
+	for(auto a:p1){
+		p.insert(make_pair(to_event_key(a.first),a.second));
+	}
+
+	auto g=to_set(get_event_keys(2013));
+	//auto m=matches(2013); //this is the only year I have pick data for
+	auto events=keys(p);
+	cout<<events<<"\n";
+	cout<<g<<"\n";
+	cout<<"sym:"<<symmetric_difference(events,g)<<"\n";
+	cout<<uniques(events,g)<<"\n";
+	//map<string,pair<Event_picks,
+	auto alliances_by_matches=finals_alliances(matches(2013));
+	//for(auto a:f) cout<<a<<"\n";
+	//cout<<"hree\n";
+	//for(auto p1:p) cout<<p1<<"\n";
+	//cout<<"gg\n";
+	for(auto event:events){
+		cout<<event<<"\n";
+		auto f=p.find(event);
+		if(f==p.end()){
+			cout<<"No data to correlate\n";
+			continue;
+		}
+		assert(f!=p.end());
+		Event_picks event_picks=f->second;
+		for(unsigned i=0;i<8;i++){
+			auto a=to_set(event_picks[i].teams);
+			auto b=alliances_by_matches[event][i];
+			if(a!=b) cout<<i<<": "<<a<<" "<<b<<"\n";
+			//assert( a==b );
+		}
+	}
+}
+
 int run_main(map<string,vector<string>> const& flags){
 	set<string> flags_used;
 	auto get_flag=[&](string name)->Maybe<vector<string>>{
@@ -661,6 +835,9 @@ int run_main(map<string,vector<string>> const& flags){
 	}
 	if(get_flag("competition_levels")){
 		cout<<competition_level(m)<<"\n";
+	}
+	if(get_flag("correlate_picks")){
+		correlate_picks();
 	}
 	auto unused=a_and_not_b(keys(flags),flags_used);
 	if(unused.size()){

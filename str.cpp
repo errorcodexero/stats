@@ -26,3 +26,12 @@ string toupper(string const& s){
 	}
 	return ss.str();
 }
+
+string tolower(string const& s){
+	stringstream ss;
+	for(auto c:s){
+		ss<<(char)::tolower(c);
+	}
+	return ss.str();
+}
+

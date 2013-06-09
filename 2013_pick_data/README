@@ -1,0 +1,1 @@
+The spreadsheet is a summary of a thread on Chief Delphi, and all the CSV files are the result of running "ssconvert" on the spreadsheet.  The CSVs are here, rather than just a script because I don't want to add an extra dependency that people will have to install.  I you're looking for, "ssconvert" is part of "gnumeric".

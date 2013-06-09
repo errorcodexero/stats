@@ -556,10 +556,6 @@ vector<Match_info::Alliance> alliances(int year,Team team){
 	nyi
 }
 
-#define RM_REF(X) typename remove_reference<X>::type
-#define RM_CONST(X) typename remove_const<X>::type
-#define ELEMENT(X) RM_CONST(RM_REF(decltype(*begin(X))))
-
 template<typename Collection>
 auto enumerate(Collection const& v)->vector<pair<unsigned,ELEMENT(v)>>{
 	vector<pair<unsigned,ELEMENT(v)>> r;

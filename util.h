@@ -9,8 +9,10 @@
 #include<vector>
 #include<set>
 #include<algorithm>
+#include<array>
 #include "exception.h"
 #include "maybe.h"
+#include "default.h"
 
 #define STREAM_OUT std::ostream& operator<<(std::ostream&,T const&);
 #define NYI {\
@@ -23,6 +25,10 @@
 
 #define PRINT(x) { std::cout<<(#x)<<"="<<(x)<<"\n"; }
 #define PRINT_TO(dest,val) { dest<<#val<<"="<<val; }
+
+#define RM_REF(X) typename remove_reference<X>::type
+#define RM_CONST(X) typename remove_const<X>::type
+#define ELEMENT(X) RM_CONST(RM_REF(decltype(*begin(X))))
 
 template<typename A,typename B>
 std::ostream& operator<<(std::ostream& o,std::pair<A,B> const& p){
@@ -148,6 +154,21 @@ template<typename T>
 T min(std::vector<T> const& v){
 	T r=*begin(v);
 	for(auto a:v) r=std::min(r,a);
+	return r;
+}
+
+template<typename T,unsigned N>
+std::ostream& operator<<(std::ostream& o,std::array<T,N> a){
+	o<<"[ ";
+	for(auto elem:a) o<<elem<<" ";
+	return o<<"]";
+}
+
+//could also do a multiset...
+template<typename T>
+std::map<T,Default<unsigned,0>> count(std::vector<T> v){
+	std::map<T,Default<unsigned,0>> r;
+	for(auto a:v) r[a]++;
 	return r;
 }
 

@@ -19,6 +19,21 @@ Team::Team(string a){
 	if(b) data|=0x4000;
 }
 
+//There are some places in The Blue Alliance data where the team # is recorded as 9999.  This is obviously wrong.  For now, we're just letting them stay as team 9999.  But in the long term, we should really figure out what that means.  
+
+Team::Team(Team const& a):data(a.data){
+	//This stuff is here just due to paranoia.  
+	assert(num());
+	//if(num()>5000) cout<<"Num="<<num()<<"\n";
+	//assert(num()<5000);//some season will have to change this.
+}
+
+Team& Team::operator=(Team const& t){
+	data=t.data;
+	assert(num());
+	//assert(num()<5000);
+}
+
 short Team::num()const{ return data&0x3fff; }
 bool Team::b()const{ return data&0x4000; }
 

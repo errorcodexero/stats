@@ -59,6 +59,20 @@ class Maybe{
 		}
 		return !p && !m;
 	}
+
+	bool operator!=(Maybe const& a)const{ return !(a==*this); }
+
+	bool operator<(Maybe const& a)const{
+		if(p){
+			if(a){
+				return *p<*a;
+			}else{
+				return 0;
+			}
+		}else{
+			return !!a;
+		}
+	}
 };
 
 template<typename T>

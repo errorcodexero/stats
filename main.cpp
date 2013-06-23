@@ -1,3 +1,4 @@
+#define NDEBUG
 #include<algorithm>
 #include<array>
 #include "tuple.h"
@@ -382,8 +383,8 @@ static const set<Pair_result> pair_results{
 	#undef X
 };
 
-set<pair<pair<Team,Team>,Pair_result>> pairwise(Simple_match m){
-	set<pair<pair<Team,Team>,Pair_result>> r;
+vector<pair<pair<Team,Team>,Pair_result>> pairwise(Simple_match m){
+	vector<pair<pair<Team,Team>,Pair_result>> r;
 	bool w0=m.score[0]>m.score[1];
 	bool w1=m.score[0]<m.score[1];
 	auto add=[&](Team a,Team b,Pair_result p){
@@ -429,13 +430,6 @@ set<pair<pair<Team,Team>,Pair_result>> pairwise(Simple_match m){
 	return r;
 }
 
-template<typename T>
-vector<T> to_vector(set<T> s){
-	vector<T> r;
-	for(auto a:s) r|=a;
-	return r;
-}
-
 //Like the 'group' function in SQL
 template<typename Func,typename T>
 auto segregate(Func f,vector<T> in)->map<decltype(f(in[0])),vector<T>>{
@@ -457,7 +451,8 @@ auto map_map(Func f,map<K,V> m)->map<K,decltype(f(begin(m)->second))>{
 map<pair<Team,Team>,map<Pair_result,Default<unsigned,0>>> head_to_head(vector<Match_info> const& m){
 	auto a=mapf([](Match_info m){ return Simple_match(m); },m);
 	auto res=flatten(mapf(
-		[](Simple_match s){ return to_vector(pairwise(s)); },
+		//[](Simple_match s){ return to_vector(pairwise(s)); },
+		[](Simple_match s){ return pairwise(s); },
 		a
 	));
 	auto seg=segregate([](pair<pair<Team,Team>,Pair_result> p){ return p.first; },res);
@@ -473,7 +468,8 @@ map<pair<Team,Team>,map<Pair_result,Default<unsigned,0>>> head_to_head(vector<Ma
 	);
 }
 
-typedef tuple<Team,Team,unsigned,unsigned,unsigned,unsigned,unsigned,unsigned> Flat_head_to_head;
+typedef unsigned U;
+typedef tuple<Team,Team,U,U,U,U,U,U> Flat_head_to_head;
 vector<Flat_head_to_head> flat_head_to_head(vector<Match_info> const& m){
 	vector<Flat_head_to_head> r;
 	for(auto a:head_to_head(m)){

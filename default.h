@@ -3,7 +3,7 @@
 
 #include<iosfwd>
 
-template<typename T,long long VALUE> //If the second argument is of type 'T' then the class doesn't work with floating point types.  
+template<typename T,T VALUE> //If the second argument is of type 'T' then the class doesn't work with floating point types.  
 class Default{
 	T t;
 

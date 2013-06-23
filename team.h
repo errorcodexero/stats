@@ -11,8 +11,6 @@ class Team{
 
 	public:
 	explicit Team(std::string);
-	Team(Team const&);
-	Team& operator=(Team const&);
 
 	friend std::ostream& operator<<(std::ostream&,Team);
 	friend bool operator<(Team,Team);

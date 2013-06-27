@@ -1,6 +1,8 @@
 #ifndef LIMITED_VECTOR_H
 #define LIMITED_VECTOR_H
 
+#include<cassert>
+
 template<typename T,unsigned MAX_LEN>
 class Limited_vector{
 	unsigned short size_;

@@ -4,6 +4,7 @@
 #include<set>
 #include<vector>
 #include<map>
+#include<string>
 #include "maybe.h"
 
 class Team;

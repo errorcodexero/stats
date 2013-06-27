@@ -1,4 +1,5 @@
 #include "pick.h"
+#include<cassert>
 #include "dirent.h"
 #include "util.h"
 #include "str.h"

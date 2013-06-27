@@ -67,6 +67,9 @@ void histogram(ostream& o,vector<int> v){
 	}
 }
 
+//should probably move this to a header someplace
+typedef string Event_key;
+
 enum class Listing_type{TEAM,EVENT,MATCH};
 
 //this might change to a map to a vector of string at some point.
@@ -201,6 +204,10 @@ void print_html_table(Collection const& c){
 
 vector<Match_info> with_team(vector<Match_info> const& m,Team t){
 	return filter([&](Match_info mi){ return teams(mi)&t; },m);
+}
+
+vector<Match_info> with_event(vector<Match_info> const& m,Event_key event){
+	return filter([&](Match_info mi){ return mi.event==event; },m);
 }
 
 //could be called 'team match result'
@@ -447,11 +454,9 @@ auto map_map(Func f,map<K,V> m)->map<K,decltype(f(begin(m)->second))>{
 	return r;
 }
 
-//might want to make return Default<unsigned,0> instead of unsigned.
 map<pair<Team,Team>,map<Pair_result,Default<unsigned,0>>> head_to_head(vector<Match_info> const& m){
 	auto a=mapf([](Match_info m){ return Simple_match(m); },m);
 	auto res=flatten(mapf(
-		//[](Simple_match s){ return to_vector(pairwise(s)); },
 		[](Simple_match s){ return pairwise(s); },
 		a
 	));
@@ -550,9 +555,6 @@ pair<set<T>,set<T>> uniques(set<T> a,set<T> b){
 	return make_pair(a_and_not_b(a,b),a_and_not_b(b,a));
 }
 
-//should probably move this to a header someplace
-typedef string Event_key;
-
 //returns 0-based number
 unsigned alliance_number(unsigned qf_number /*one-based*/,string side_name){
 	bool red;
@@ -602,11 +604,20 @@ vector<Match_info> eliminations(vector<Match_info> m){
 	return filter([](Match_info m){ return m.competition_level!=Competition_level::QUALS; },m);
 }
 
+vector<Match_info> finals(vector<Match_info> m){
+	return filter([](Match_info m){ return m.competition_level==Competition_level::FINALS; },m);
+}
+
+vector<Match_info> quals(vector<Match_info> m){
+	return filter([](Match_info m){ return m.competition_level==Competition_level::QUALS; },m);
+}
+
 struct Elim_matchup{
 	vector<Match_info> v; //where event, etc, are all the same.
 };
 
 struct Elimination_competition_level{
+	//if wanted to, could actually make this check that it isn't QUALS.
 	Competition_level data;
 
 	operator Competition_level()const{ return data; }
@@ -722,6 +733,38 @@ void correlate_picks(){
 	}
 }
 
+map<Team,pair<Default<unsigned,0>,Default<unsigned,0>>> finals_appearances(vector<Match_info> m){
+	map<Team,pair<Default<unsigned,0>,Default<unsigned,0>>> r;
+	for(auto event_p:segregate([](Match_info m){ return m.event; },m)){
+		auto event_matches=event_p.second;
+		for(auto team:teams(event_matches)){
+			auto w=with_team(event_matches,team);
+			assert(w.size());
+			auto e=eliminations(w);
+			r[team].first++;
+			if(e.size()) r[team].second++;
+		}
+	}
+	return r;
+}
+
+template<typename T>
+T last(vector<T> v){
+	assert(v.size());
+	return v[v.size()-1];
+}
+
+//maybe this should be moved to match_info.cpp
+set<Team> teams(Match_info::Alliance a){
+	return to_set(a.teams);
+}
+
+set<Team> winners(Match_info m){
+	auto w=winning_alliances(vector<Match_info>{m});
+	assert(w.size()==1);//won't happen if we've got a tie
+	return teams(w[0]);
+}
+
 int run_main(map<string,vector<string>> const& flags){
 	set<string> flags_used;
 	auto get_flag=[&](string name)->Maybe<vector<string>>{
@@ -834,6 +877,47 @@ int run_main(map<string,vector<string>> const& flags){
 	}
 	if(get_flag("correlate_picks")){
 		correlate_picks();
+	}
+	if(get_flag("finals")){
+		auto f=finals_appearances(m);
+		typedef tuple<Team,unsigned,unsigned,unsigned> Tup;
+		vector<Tup> v;
+		for(auto p:f){
+			auto team=p.first;
+			auto events=p.second.first;
+			auto elims=p.second.second;
+			v|=Tup(team,events,elims,events-elims);
+		}
+		v=sort_tuples<Tup,3>(v);
+		//v=filter([](Tup t){ return get<2>(t)==0; },v);
+		print_table(v);
+		//for(auto a:v) cout<<a<<"\n";
+	}
+	if(get_flag("rank")){
+		//try to figure out which alliance has won an event with the worst record for its members before the elimination rounds.
+		typedef tuple<Event_key,set<Team>,double> Tup;
+		vector<Tup> v;
+		for(auto event_p:segregate([](Match_info mi){ return mi.event; },m)){
+			auto matches=event_p.second;
+			auto finals_matches=finals(matches);
+			auto winning_teams=winners(last(finals_matches));
+			auto qual_matches=quals(matches);
+			auto recs=calculate_records(qual_matches);
+			//need to figure out the winning alliance
+			//then, for each of its members, find their qualification record
+			//add them all up and put into the vector.
+
+			//to start with, going to start by just figuring out the record of everyone in the finals.
+			//auto winning_teams=teams(finals_matches);
+			Record winning_alliance_record;
+			for(auto team:winning_teams){
+				winning_alliance_record+=recs[team];
+			}
+			//cout<<event_p.first<<" "<<winning_alliance_record<<" "<<win_portion(winning_alliance_record)<<"\n";
+			v|=make_tuple(event_p.first,winning_teams,win_portion(winning_alliance_record));
+		}
+		v=sort_tuples<Tup,2>(v);
+		print_table(v);
 	}
 	auto unused=a_and_not_b(keys(flags),flags_used);
 	if(unused.size()){

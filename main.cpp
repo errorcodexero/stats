@@ -1,4 +1,3 @@
-#define NDEBUG
 #include<algorithm>
 #include<array>
 #include "tuple.h"
@@ -897,9 +896,15 @@ int run_main(map<string,vector<string>> const& flags){
 		//try to figure out which alliance has won an event with the worst record for its members before the elimination rounds.
 		typedef tuple<Event_key,set<Team>,double> Tup;
 		vector<Tup> v;
+		vector<Event_key> no_finals;
 		for(auto event_p:segregate([](Match_info mi){ return mi.event; },m)){
+			auto event_key=event_p.first;
 			auto matches=event_p.second;
 			auto finals_matches=finals(matches);
+			if(finals_matches.size()==0){
+				no_finals|=event_key;
+				continue;
+			}
 			auto winning_teams=winners(last(finals_matches));
 			auto qual_matches=quals(matches);
 			auto recs=calculate_records(qual_matches);
@@ -918,6 +923,7 @@ int run_main(map<string,vector<string>> const& flags){
 		}
 		v=sort_tuples<Tup,2>(v);
 		print_table(v);
+		cout<<"No finals results:"<<no_finals<<"\n";
 	}
 	auto unused=a_and_not_b(keys(flags),flags_used);
 	if(unused.size()){

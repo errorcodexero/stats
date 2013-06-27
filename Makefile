@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-CFLAGS=-O3 --std=c++0x
+CFLAGS=-g --std=c++0x
 DEPS=*.h
 CFILES=$(shell ls *.cpp)
 OBJ=$(CFILES:cpp=o)

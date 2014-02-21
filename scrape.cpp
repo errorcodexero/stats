@@ -42,7 +42,12 @@ void download_page(string const& url,string const& outfile){
 	static const string tmpfile="tmp1.tmp";
 	stringstream ss;
 	//moves the file into place when it's done instead of downloading it to the right place because otherwise if it gets killed halfway through you can end up with an invalid file.
-	ss<<"wget -q -O "<<tmpfile<<" "<<escape_to_commandline(url);
+	ss<<"wget ";
+
+	//this line is needed because the blue alliance started requiring that this be sent along with the request.
+	ss<<"--header='X-TBA-App-Id: jay:bob:2' ";
+
+	ss<<"-q -O "<<tmpfile<<" "<<escape_to_commandline(url);
 	ss<<" && mv "<<tmpfile<<" "<<outfile;
 	//cout<<"Running: "<<ss.str()<<"\n";
 	auto r=system(ss.str().c_str());
@@ -407,6 +412,12 @@ class Either{
 	}
 };
 
+json_spirit::Value remove_array(json_spirit::Value v){
+	auto a=v.get_array();
+	assert(a.size()==1);
+	return a[0];
+}
+
 //example input: 2010cmp_f1m1
 Match_info match_info(string const& match_key){
 	//cout<<"going to ...\n";
@@ -415,6 +426,9 @@ Match_info match_info(string const& match_key){
 	read(s,value);
 	Match_info r;
 	//cout<<"starting\n";
+	//cout<<value<<"\n";
+	//value=value.get_array()[0];
+	value=remove_array(value);
 	for(auto p:value.get_obj()){
 		//cout<<"p1="<<p<<"\n";
 		auto n=p.name_;

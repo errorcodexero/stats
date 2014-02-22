@@ -11,6 +11,8 @@
 #include "default.h"
 #include "limited_vector.h"
 #include "pick.h"
+#include "projected_strength.h"
+#include "calculate.h"
 
 using namespace std;
 
@@ -108,7 +110,7 @@ set<string> events(vector<Match_info> const& v){
 	return r;
 }
 
-map<Team,Record> calculate_records(vector<Match_info> const& m){
+/*map<Team,Record> calculate_records(vector<Match_info> const& m){
 	map<Team,Record> r;
 	for(Match_info const& match:m){
 		auto v=values(match.alliances);
@@ -131,7 +133,7 @@ map<Team,Record> calculate_records(vector<Match_info> const& m){
 		}
 	}
 	return r;
-}
+}*/
 
 template<typename K,typename V>
 vector<pair<K,V>> to_pairs(map<K,V> m){
@@ -777,6 +779,10 @@ int run_main(map<string,vector<string>> const& flags){
 		if(!f) return vector<string>{default_value};
 		return *f;
 	};
+
+	if(flags.find("project")!=flags.end()){
+		return project(flags);
+	}
 
 	auto y=get_flag_default("year","2013");
 	vector<Match_info> m;

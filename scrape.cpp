@@ -1,3 +1,4 @@
+#include "scrape.h"
 #include<sstream>
 #include<cassert>
 #include<string.h>
@@ -274,24 +275,23 @@ vector<string> get_event_keys(int year){
 	return r;
 }
 
-//data from the event details page of the blue alliance
-struct BEvent_details{
-	Maybe<string> location;
-	string key;
-	string year;//could actually make this an int
-	Maybe<string> start_date;
-	string name;
-	vector<Team> teams;
-	bool official;
-	vector<string> matches;
-	string event_code;
-	Maybe<string> end_date;
-	Maybe<string> name_short;
-	Maybe<bool> facebook_eid; //fix the type of this.
-};
-
 ostream& operator<<(ostream& o,BEvent_details const& b){
-	return o<<"benent("<<b.name_short<<" "<<b.location<<")";
+	o<<"benent("<<b.name_short<<" ";
+	o<<b.location;
+	#define X(name) o<<""#name<<":"<<b.name<<" ";
+	X(key)
+	X(year)
+	X(start_date)
+	X(name)
+	X(teams)
+	X(official)
+	X(matches)
+	X(event_code)
+	X(end_date)
+	X(facebook_eid)
+	#undef X
+	o<<")";
+	return o;
 }
 
 BEvent_details get_details(string const& event_code){

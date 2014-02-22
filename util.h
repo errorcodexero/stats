@@ -187,4 +187,22 @@ Maybe<double> median(std::vector<int>);
 Maybe<int> mode(std::vector<int> const&);
 std::vector<int> quartiles(std::vector<int>);
 
+template<typename T>
+T sum(std::vector<T> v){
+	T total{};
+	for(auto a:v) total+=a;
+	return total;
+}
+
+template<typename T>
+double mean(std::vector<T> v){
+	return sum(v)/(v.size()+0.0);
+}
+
+template<typename T>
+std::vector<T> sorted(std::vector<T> v){
+	sort(begin(v),end(v));
+	return v;
+}
+
 #endif

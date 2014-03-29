@@ -1,0 +1,7 @@
+g++ -std=c++0x -DCMP \
+	cmp.cpp \
+	util.cpp \
+	exception.cpp \
+	str.cpp \
+	team.cpp \
+	-o cmp 2>&1 && ./cmp

@@ -1,5 +1,6 @@
 #include "pick.h"
 #include<cassert>
+#include<errno.h>
 #include "dirent.h"
 #include "util.h"
 #include "str.h"
@@ -128,7 +129,7 @@ int pick_main(){
 		aa[i][3]=m[i][Alliance_result::QF]+aa[i][2];
 	}
 	for(auto a:aa){
-		cout<<a<<"\n";
+		nyi//cout<<a<<"\n";
 	}
 
 	cout<<"winning \% at each round, for each seed\n";
@@ -139,7 +140,7 @@ int pick_main(){
 		}
 	}
 	for(auto a:seed_pcnt){
-		cout<<a<<"\n";
+		nyi//cout<<a<<"\n";
 	}
 
 	//a more complicated thing to try would be to figure out what the winning % between each seed is.  

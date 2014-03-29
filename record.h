@@ -3,6 +3,10 @@
 
 #include<iosfwd>
 
+//could be called 'team match result'
+enum class Match_result{WIN,LOSS,TIE};
+std::ostream& operator<<(std::ostream&,Match_result);
+
 struct Record{
 	unsigned win,loss,tie;
 

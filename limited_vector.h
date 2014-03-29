@@ -32,6 +32,7 @@ class Limited_vector{
 		clear();
 		for(auto a:v) push_back(a);
 		assert(size_==v.size());
+		return *this;
 	}
 
 	~Limited_vector(){

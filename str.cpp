@@ -19,6 +19,27 @@ vector<string> split(string const& s,char c){
 	return r;
 }
 
+//turns all runs of whitespace into a single space
+string merge_whitespace(string const& in){
+	stringstream ss;
+	bool last_was=1;
+	for(auto c:in){
+		if(isblank(c)){
+			if(last_was) continue;
+			ss<<' ';
+			last_was=1;
+		}else{
+			ss<<c;
+			last_was=0;
+		}
+	}
+	return ss.str();
+}
+
+vector<string> split(string const& s){
+	return split(merge_whitespace(s),' ');
+}
+
 string toupper(string const& s){
 	stringstream ss;
 	for(auto c:s){

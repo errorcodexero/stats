@@ -8,9 +8,11 @@ class Team{
 
 	short num()const;
 	bool b()const;
+	void check_valid()const;
 
 	public:
 	explicit Team(std::string);
+	explicit Team(int);
 
 	friend std::ostream& operator<<(std::ostream&,Team);
 	friend bool operator<(Team,Team);

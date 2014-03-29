@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<algorithm>
 #include "default.h"
+#include "str.h"
 
 using namespace std;
 
@@ -129,3 +130,23 @@ string tag(string const& tag,string const& body){
 	ss<<"<"<<tag<<">"<<body<<"</"<<tag<<">";
 	return ss.str();
 }
+
+map<string,string> env_vars(char **envp){
+	assert(envp);
+	map<string,string> r;
+	for(char **env=envp;*env;env++){
+		string e=*env;
+		auto sp=split(e,'=');
+		r[sp[0]]=join(tail(sp),'=');
+	}
+	return r;
+}
+
+//should probably move to util
+vector<string> args(int argc,char **argv){
+	vector<string> r;
+	for(int i=1;i<argc;i++) r|=string(argv[i]);
+	return r;
+}
+
+int atoi(string const& s){ return ::atoi(s.c_str()); }

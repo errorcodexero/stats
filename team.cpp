@@ -7,6 +7,10 @@ using namespace std;
 
 static const int MAX_TEAM_NUMBER=9999;
 
+void Team::check_valid()const{
+	assert(num() && num()<=MAX_TEAM_NUMBER);
+}
+
 Team::Team(string a){
 	if(prefix(a,"frc")) a=a.substr(3,a.size()-3);
 	assert(a.size());
@@ -20,7 +24,11 @@ Team::Team(string a){
 	assert(data);
 	if(b) data|=0x4000;
 
-	assert(num() && num()<=MAX_TEAM_NUMBER);
+	check_valid();
+}
+
+Team::Team(int i):data(i){
+	check_valid();
 }
 
 //There are some places in The Blue Alliance data where the team # is recorded as 9999.  This is obviously wrong.  For now, we're just letting them stay as team 9999.  But in the long term, we should really figure out what that means.  

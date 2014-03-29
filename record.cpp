@@ -4,6 +4,18 @@
 
 using namespace std;
 
+ostream& operator<<(ostream& o,Match_result m){
+	switch(m){
+		#define X(name) case Match_result::name: return o<<""#name;
+		X(WIN)
+		X(LOSS)
+		X(TIE)
+		#undef X
+		default:
+			assert(false);
+	}
+}
+
 Record::Record():win(0),loss(0),tie(0){}
 Record::Record(unsigned a,unsigned b,unsigned c):win(a),loss(b),tie(c){}
 

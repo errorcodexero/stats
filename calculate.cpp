@@ -31,3 +31,32 @@ map<Team,Record> calculate_records(vector<Match_info> const& m){
 	}
 	return r;
 }
+
+Record tally(Match_result m){
+	switch(m){
+		case Match_result::WIN: return Record{1,0,0};
+		case Match_result::LOSS: return Record{0,1,0};
+		case Match_result::TIE: return Record{0,0,1};
+		default:nyi
+	}
+}
+
+Record tally(vector<Match_result> const& v){
+	Record r;
+	for(auto a:v){
+		switch(a){
+			case Match_result::WIN:
+				r.win++;
+				break;
+			case Match_result::LOSS:
+				r.loss++;
+				break;
+			case Match_result::TIE:
+				r.tie++;
+				break;
+			default:
+				assert(false);
+		}
+	}
+	return r;
+}

@@ -2,10 +2,12 @@
 #include<sstream>
 #include<cassert>
 #include<string.h>
+#include<sys/time.h>
 #include<boost/numeric/ublas/matrix.hpp>
 #include<boost/numeric/ublas/vector.hpp>
 #include<boost/numeric/ublas/lu.hpp>
 #include<boost/numeric/ublas/io.hpp>
+#include "boost/date_time/gregorian/gregorian.hpp"
 #include "json_spirit.h"
 #include "util.h"
 #include "str.h"
@@ -16,6 +18,25 @@
 #include "match_info.h"
 
 using namespace std;
+
+template<typename K,typename V>
+vector<pair<K,V>> map_to_pairs(map<K,V> m){
+	vector<pair<K,V>> r;
+	for(auto p:m) r|=make_pair(p.first,p.second);
+	return r;
+}
+
+template<typename A,typename B>
+pair<B,A> reverse(pair<A,B> p){
+	return make_pair(p.second,p.first);
+}
+
+template<typename A,typename B>
+vector<pair<B,A>> reverse_pairs(vector<pair<A,B>> v){
+	vector<pair<B,A>> r;
+	for(auto a:v) r|=reverse(a);
+	return r;
+}
 
 string escape_to_commandline(char c){
 	//NOTE: If you ever want to run this as a cgi script or something, you will neeed to make this better.
@@ -40,7 +61,7 @@ string escape_to_commandline(string const& s){
 
 //going to make a cache of downloaded pages...
 void download_page(string const& url,string const& outfile){
-	static const string tmpfile="tmp1.tmp";
+	string tmpfile="tmp"+as_string(rand())+".tmp";
 	stringstream ss;
 	//moves the file into place when it's done instead of downloading it to the right place because otherwise if it gets killed halfway through you can end up with an invalid file.
 	ss<<"wget ";
@@ -52,6 +73,10 @@ void download_page(string const& url,string const& outfile){
 	ss<<" && mv "<<tmpfile<<" "<<outfile;
 	//cout<<"Running: "<<ss.str()<<"\n";
 	auto r=system(ss.str().c_str());
+	if(r){
+		cout<<"r="<<r<<"\n";
+		cout<<"cmd="<<ss.str()<<"\n";
+	}
 	assert(!r);
 }
 
@@ -96,7 +121,15 @@ string scrape_cached(string const& url){
 	cout<<"not found, redownloading:"<<url<<"\n";
 	cout.flush();
 	download_page(url,cache_file);
-	return slurp(cache_file);
+	auto s=slurp(cache_file);
+	if(s.size()){
+		//cout<<"Size was:"<<s.size()<<"\n";
+		return s;
+	}
+	cout<<"Trying again...\n";
+	download_page(url,cache_file);
+	auto s2=slurp(cache_file);
+	return s2;
 }
 
 vector<string> split_on(string const& haystack,string const& needle){
@@ -205,6 +238,19 @@ ostream& operator<<(ostream& o,json_spirit::Pair_impl<A> const& p){
 	return o<<"("<<p.name_<<" "<<p.value_<<")";
 }
 
+Maybe<Date> parse_date(Maybe<string> m){
+	if(m==Maybe<string>()) return Maybe<Date>();
+	auto s=*m;
+	auto sp=split(s,'T');
+	assert(sp.size()==2);
+	auto s2=split(sp[0],'-');
+	int year=atoi(s2[0]);
+	int month=atoi(s2[1]);
+	int day=atoi(s2[2]);
+	//ignoring the time for now.  Mostly seem to be zeros anyway.
+	return Date(year,month,day);
+}
+
 //will return the keys
 vector<BEvent> get_events(int year){
 	//if wanted to do this the super-clean way, would have the parsing function seperate from the downloading.  
@@ -237,7 +283,7 @@ vector<BEvent> get_events(int year){
 			if(n=="name"){
 				b.name=v();
 			}else if(n=="end_date"){
-				b.end_date=maybe_str();
+				b.end_date=parse_date(maybe_str());
 			}else if(n=="official"){
 				switch(val.type()){
 					case json_spirit::bool_type:
@@ -254,7 +300,7 @@ vector<BEvent> get_events(int year){
 			}else if(n=="key"){
 				b.key=v();
 			}else if(n=="start_date"){
-				b.start_date=maybe_str();
+				b.start_date=parse_date(maybe_str());
 			}else{
 				cout<<"Got "<<n<<"\n";
 				nyi
@@ -327,9 +373,9 @@ BEvent_details get_details(string const& event_code){
 		if(n=="event_code"){
 			r.event_code=s();
 		}else if(n=="start_date"){
-			r.start_date=ms();
+			r.start_date=parse_date(ms());
 		}else if(n=="end_date"){
-			r.end_date=ms();
+			r.end_date=parse_date(ms());
 		}else if(n=="short_name"){
 			if(v.type()!=json_spirit::null_type){
 				r.name_short=s();
@@ -420,6 +466,7 @@ json_spirit::Value remove_array(json_spirit::Value v){
 
 //example input: 2010cmp_f1m1
 Match_info match_info(string const& match_key){
+	//cout<<"m="<<match_key<<"\n";
 	//cout<<"going to ...\n";
 	auto s=scrape_cached("http://www.thebluealliance.com/api/v1/match/details?match="+match_key);
 	json_spirit::Value value;
@@ -558,7 +605,12 @@ vector<string> match_keys(int year){
 
 vector<Match_info> matches(int year){
 	//this could be parellized without too much trouble.
-	return mapf(match_info,match_keys(year));
+	try{
+		return mapf(match_info,match_keys(year));
+	}catch(...){
+		cout<<"failure in parsing match.\n";
+		throw;
+	}
 }
 
 vector<Match_info> matches(int year,Team team){
@@ -786,3 +838,484 @@ string team_page(Team team){
 	));
 }
 
+struct BAward{
+	string event_key;
+	string name;
+	struct Recipient{
+		Maybe<int> team_number;//things like "Volunteer of the Year" don't have to have a team.
+		Maybe<string> awardee;
+	};
+	vector<Recipient> recipient_list;
+	int year;
+};
+
+ostream& operator<<(ostream& o,BAward::Recipient a){
+	o<<"BAward::Recipient(";
+	o<<a.team_number;
+	o<<" "<<a.awardee;
+	return o<<")";
+}
+
+ostream& operator<<(ostream& o,BAward a){
+	o<<"BAward(";
+	#define X(name) o<<""#name<<":"<<a.name<<" ";
+	X(event_key)
+	X(name)
+	X(recipient_list)
+	X(year)
+	return o<<")";
+}
+
+BAward::Recipient parse_recipient(json_spirit::Value value){
+	BAward::Recipient r;
+	for(auto a:value.get_obj()){
+		auto k=a.name_;
+		auto v=a.value_;
+		if(k=="team_number"){
+			if(v.type()!=json_spirit::null_type){
+				r.team_number=v.get_int();
+			}
+		}else if(k=="awardee"){
+			if(v.type()!=json_spirit::null_type){
+				r.awardee=v.get_str();
+			}
+		}else{
+			cout<<"k2="<<k<<"\n";
+			nyi
+		}
+	}
+	return r;
+}
+
+BAward parse_award(json_spirit::Value value){
+	//cout<<value<<"\n";
+	BAward r;
+	for(auto a:value.get_obj()){
+		auto k=a.name_;
+		auto v=a.value_;
+		auto s=[&](){
+			try{
+				return v.get_str();
+			}catch(...){
+				cout<<"k="<<k<<"\n";
+				cout<<"v="<<v<<"\n";
+				nyi
+			}
+		};
+
+		if(k=="event_key"){
+			r.event_key=s();
+		}else if(k=="name"){
+			r.name=s();
+		}else if(k=="recipient_list"){
+			try{
+				for(auto elem:v.get_array()){
+					r.recipient_list|=parse_recipient(elem);
+				}
+			}catch(...){
+				cout<<value<<"\n";
+				nyi
+			}
+		}else if(k=="year"){
+			r.year=v.get_int();
+		}else{
+			cout<<"k1="<<k<<"\n";
+			nyi
+		}
+	}
+	return r;
+}
+
+//appears inside of the team details
+struct BEvent_model{
+	string key;
+	Maybe<string> end_date;
+	string name;
+	//Maybe<string> facebook_eid;
+	//matches - ignore for now.
+	Maybe<string> short_name;
+	vector<BAward> awards;
+};
+
+ostream& operator<<(ostream& o,BEvent_model a){
+	o<<"BEvent_model(";
+	#define X(name) o<<""#name<<":"<<a.name<<" ";
+	X(key)
+	X(end_date)
+	X(name)
+	X(short_name)
+	X(awards)
+	#undef X
+	return o<<")";
+}
+
+BEvent_model parse_event(json_spirit::Value value){
+	//cout<<value<<"\n";
+	//nyi
+	BEvent_model r;
+	for(auto p:value.get_obj()){
+		auto k=p.name_;
+		auto v=p.value_;
+		//cout<<"Event n"<<k<<"\n";
+		auto s=[&](){
+			try{
+				return v.get_str();
+			}catch(...){
+				cout<<"Failed at "<<k<<"\n";
+				cout<<"Value:"<<v<<"\n";
+				throw;
+			}
+		};
+		auto ms=[&](){
+			if(v.type()==json_spirit::null_type) return Maybe<string>();
+			return Maybe<string>(v.get_str());
+		};
+
+		if(k=="key"){
+			r.key=s();
+		}else if(k=="end_date"){
+			r.end_date=ms();
+		}else if(k=="name"){
+			r.name=s();
+		}else if(k=="short_name"){
+			r.short_name=ms();
+		}else if(k=="facebook_eid"){
+			//skip
+		}else if(k=="matches"){
+			//skip
+		}else if(k=="official"){
+			//skip
+		}else if(k=="awards"){
+			for(auto elem:v.get_array()){
+				try{
+					r.awards|=parse_award(elem);
+				}catch(...){
+					nyi
+				}
+			}
+		}else if(k=="location"){
+			//skip
+		}else if(k=="event_code"){
+			//how is this different from "key"?
+			//skip
+		}else if(k=="year"){
+			//skip
+		}else if(k=="event_type_string"){
+			//skip
+		}else if(k=="start_date"){
+			//skip
+		}else if(k=="event_type"){
+			//skip
+		}else{
+			cout<<"k="<<k<<"\n";
+			nyi
+		}
+	}
+	return r;
+}
+
+struct BTeam_data{
+	Maybe<string> website;
+	Maybe<string> name;
+	Maybe<string> locality;
+	string region;
+	//string country; exists in the API document
+	Maybe<string> location;
+	string team_number;
+	string key;
+	Maybe<string> nickname;
+	vector<BEvent_model> events;
+
+	//doesn't exist in the API document
+	Maybe<string> country_name;
+};
+
+ostream& operator<<(ostream& o,BTeam_data t){
+	o<<"Team_data(";
+	#define X(name) o<<""#name<<":"<<t.name<<" ";
+	X(website)
+	X(name)
+	X(locality)
+	X(region)
+	//X(country)
+	X(location)
+	X(team_number)
+	X(key)
+	X(nickname)
+	X(events)
+	X(country_name)
+	return o<<")";
+}
+
+BTeam_data parse_team_data(string page){
+	json_spirit::Value value;
+	read(page,value);
+	BTeam_data r;
+	//cout<<"start\n";
+	for(auto a:value.get_obj()){
+		//cout<<"got:"<<a<<"\n";
+		//cout<<"name:"<<a.name_<<"\n";
+		//cout<<"value:"<<a.value_;
+		auto s=[&](){
+			try{
+				return a.value_.get_str();
+			}catch(...){
+				cout<<value<<"\n";
+				cout<<"Not a str ("<<a.name_<<"):"<<a.value_<<"\n";
+				throw;
+			}
+		};
+		auto ms=[&](){
+			if(a.value_.type()==json_spirit::null_type) return Maybe<string>();
+			return Maybe<string>(s());
+		};
+		if(a.name_=="website"){
+			r.website=ms();
+		}else if(a.name_=="name"){
+			r.name=ms();
+		}else if(a.name_=="locality"){
+			r.locality=ms();
+		}else if(a.name_=="region"){
+			r.region=ms();
+		//}else if(a.name_=="country"){
+		//	r.country=a.value_.get_st
+		}else if(a.name_=="location"){
+			r.location=ms();
+		}else if(a.name_=="team_number"){
+			r.team_number=a.value_.get_int();
+		}else if(a.name_=="key"){
+			r.key=a.value_.get_str();
+		}else if(a.name_=="country_name"){
+			r.country_name=ms();
+		}else if(a.name_=="nickname"){
+			r.nickname=ms();
+		}else if(a.name_=="events"){
+			for(auto elem:a.value_.get_array()){
+				try{
+					r.events|=parse_event(elem);
+				}catch(...){
+					nyi
+				}
+			}
+		}else{
+			//cout<<r<<"\n";
+			cout<<"name="<<a.name_<<"\n";
+			//cout<<a<<"\n";
+			nyi
+		}
+	}
+	return r;
+}
+
+BTeam_data team_data(Team team,int year){
+	string s="http://www.thebluealliance.com/api/v2/team/frc"+as_string(team)+"/"+as_string(year);
+	auto s2=scrape_cached(s);
+	try{
+		return parse_team_data(s2);
+	}catch(...){
+		cout<<"Team:"<<team<<" "<<year<<"\n";
+		cout<<"s2=\""<<s2<<"\"\n";
+		cout<<"Error parsing 3\n";
+		throw;
+	}
+}
+
+template<typename T>
+vector<T> without_last(vector<T> v){
+	v.pop_back();
+	return v;
+}
+
+vector<string> simplify_award_name(vector<string> sp){
+	assert(sp.size());
+
+	static const vector<string> remove_from_end{"Award","(#1)","Friday","Saturday","-"};
+	for(auto a:remove_from_end){
+		if(sp[sp.size()-1]==a){
+			return simplify_award_name(without_last(sp));
+		}
+	}
+
+	vector<string> divisions={"Archimedes","Curie","Galileo","Newton"};
+
+	if(contains(divisions,sp[sp.size()-1])){
+		sp.pop_back();//remove division name
+		assert(sp.size());
+		sp.pop_back();//remove hyphen
+		return simplify_award_name(sp);
+	}
+
+	if(sp[0]=="Championship" || contains(divisions,sp[0]) || sp[0]=="Division" || sp[0]=="District" || sp[0]=="Regional"){
+		return simplify_award_name(tail(sp));
+	}
+
+	if(sp[0]=="-") return simplify_award_name(tail(sp));
+
+	if(
+		sp[0]=="Autodesk" || sp[0]=="DaimlerChrysler" || sp[0]=="Chrysler" || sp[0]=="GM" || sp[0]=="RadioShack" || sp[0]=="Xerox" || sp[0]=="Delphi" || sp[0]=="J&J" || sp[0]=="Motorola"
+	){
+		return simplify_award_name(tail(sp));
+	}
+	if(
+		(sp[0]=="General" && sp[1]=="Motors") || 
+		(sp[0]=="Underwriters" && (sp[1]=="Laboratory" || sp[1]=="Laboratories")) ||
+		(sp[0]=="Radio" && sp[1]=="Shack") ||
+		(sp[0]=="Rockwell" && sp[1]=="Automation") ||
+		(sp[0]=="State" && sp[1]=="Championship")
+	){
+		return simplify_award_name(tail(tail(sp)));
+	}
+
+	if(sp[0]=="Johnson" && sp[1]=="&" && sp[2]=="Johnson"){
+		return simplify_award_name(skip(3,sp));
+	}
+
+	for(unsigned i=0;i+1<sp.size();i++){
+		if(sp[i]=="sponsored" && sp[i+1]=="by"){
+			sp=take(i-1,sp);
+		}
+	}
+
+	return sp;
+}
+
+string without_odd_chars(string s){
+	stringstream ss;
+	for(auto c:s){
+		if(isprint(c)) ss<<c;
+	}
+	return ss.str();
+}
+
+string simplify_award_name(string s){
+	s=without_odd_chars(s);
+	if(strstr(s.c_str(),"Kleiner")) return "Entrepreneurship";
+	auto sp=split(s);
+	//cout<<"before:"<<s<<"\n";
+	sp=simplify_award_name(sp);
+	s=join(sp,' ');
+	//cout<<"after:"<<s<<"\n";
+
+	//TODO: Need to add some unification of Dean's list stuff.
+
+	if(s=="Website Design") return "Website";
+	if(s=="Chairmans" || s=="Chairman's Award Winner" || s=="Chairmans Winner") return "Chairman's";
+	if(s=="Judges") return "Judge's";
+	if(s=="Finalists") return "Finalist";
+	if(s=="Winners") return "Winner";
+	if(s=="Web Site") return "Website";
+	if(s=="Leadership in Controls") return "Leadership in Control";
+	if(s=="\"Driving Tommorow's Technology\"" || s=="\"Driving Tomorrows Technology") return "\"Driving Tomorrow's Technology\"";
+	if(strstr(s.c_str(),"Imagery")) return "Imagery";
+	return s;
+}
+
+typedef string Event_key;
+vector<pair<Event_key,string>> awards(Team team,int year){
+	vector<pair<Event_key,string>> r;
+	for(auto event:team_data(team,year).events){
+		for(auto award:event.awards){
+			r|=make_pair(event.key,simplify_award_name(award.name));
+		}
+	}
+	return r;
+}
+
+vector<int> all_years(){
+	vector<int> r;
+	//todo: change this back to 1992.
+	for(int i=1992;i<=2013;i++){
+		r|=i;
+	}
+	return r;
+}
+
+vector<Match_info> all_matches(){
+	vector<Match_info> r;
+	for(auto y:all_years()) r|=matches(y);
+	return r;
+}
+
+set<Team> calc_all_teams(){
+	auto t=teams(all_matches());
+	//t.erase(Team("frc764"));//team page for this one doesn't exits right in 1993.
+	return t;
+}
+
+set<Team> all_teams(){
+	static const auto r=calc_all_teams();
+	return r;
+}
+
+void reseed(){
+     struct timeval time; 
+     gettimeofday(&time,NULL);
+
+     // microsecond has 1 000 000
+     // Assuming you did not need quite that accuracy
+     // Also do not assume the system clock has that accuracy.
+     srand((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+vector<string> calc_awards(int year){
+	vector<string> r;
+	for(auto team:all_teams()){
+		for(auto award:awards(team,year)){
+			r|=award.second;
+		}
+	}
+	return r;
+}
+
+vector<string> awards(int year){
+	static map<int,vector<string>> cache;
+	auto f=cache.find(year);
+	if(f==cache.end()){
+		return cache[year]=calc_awards(year);
+	}
+	return f->second;
+}
+
+vector<string> all_awards(){
+	vector<string> r;
+	for(auto year:all_years()){
+		r|=awards(year);
+		//cout<<"r="<<r<<"\n";
+	}
+	return r;
+}
+
+void award_appearances(){
+	//figure out how many times each award was given in each year
+	for(auto award:to_set(all_awards())){
+		cout<<"Award: \""<<award<<"\"\n";
+		for(auto year:all_years()){
+//			cout<<year<<":";
+//			cout<<count(awards(year))[award]<<"\n";
+		}
+	}
+}
+
+void awards(){
+	reseed();
+	//cout<<p<<"\n";
+/*	auto p=team_data(
+	for(auto a:p.events){
+		cout<<a.awards<<"\n";
+	}*/
+	//cout<<count(all_awards())<<"\n";
+	award_appearances();
+	return;
+
+	auto c=count(all_awards());
+	auto d=sorted(reverse_pairs(map_to_pairs(c)));
+	for(auto a:d){
+		cout<<a<<"\n";
+	}
+	cout<<"demo:\n";
+	for(unsigned i=2004;i<2014;i++){
+		auto a=awards(Team("frc1425"),i);
+		for(auto e:a) cout<<e<<"\n";
+	}
+	//return 0;
+}

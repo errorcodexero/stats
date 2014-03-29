@@ -18,6 +18,8 @@ enum class Competition_level{
 Maybe<Competition_level> parse_competition_level(std::string);
 std::ostream& operator<<(std::ostream& o,Competition_level);
 
+typedef std::string Event_key;
+
 struct Match_info{
 	int match_number;
 	int set_number;
@@ -29,7 +31,7 @@ struct Match_info{
 		std::vector<Team> teams;
 	};
 	std::map<std::string,Alliance> alliances;
-	std::string event;
+	Event_key event;
 };
 
 std::ostream& operator<<(std::ostream&,Match_info::Alliance const&);
@@ -48,5 +50,11 @@ std::vector<Match_info::Alliance> winning_alliances(std::vector<Match_info> cons
 std::vector<Match_info::Alliance> losing_alliances(std::vector<Match_info> const& m);
 Maybe<double> mean_score(std::vector<Match_info::Alliance> const& v);
 std::vector<Match_info::Alliance> alliances(std::vector<Match_info> const&);
+std::vector<Match_info> with_team(std::vector<Match_info> const&,Team);
+std::vector<Match_info> with_event(std::vector<Match_info> const& m,Event_key);
+std::set<Event_key> events(std::vector<Match_info> const&);
+std::vector<Match_info> eliminations(std::vector<Match_info>);
+std::vector<Match_info> finals(std::vector<Match_info>);
+std::vector<Match_info> quals(std::vector<Match_info>);
 
 #endif

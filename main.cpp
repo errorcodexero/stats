@@ -13,6 +13,7 @@
 #include "pick.h"
 #include "projected_strength.h"
 #include "calculate.h"
+#include "points.h"
 
 using namespace std;
 
@@ -28,25 +29,6 @@ It would be interesting to attempt to test Karthik's hypothesis that you'd be be
 It would be interesting to try to get the data about what the pick orders was.
 */
 
-//should probably move to util
-map<string,string> env_vars(char **envp){
-	assert(envp);
-	map<string,string> r;
-	for(char **env=envp;*env;env++){
-		string e=*env;
-		auto sp=split(e,'=');
-		r[sp[0]]=join(tail(sp),'=');
-	}
-	return r;
-}
-
-//should probably move to util
-vector<string> args(int argc,char **argv){
-	vector<string> r;
-	for(unsigned i=1;i<argc;i++) r|=string(argv[i]);
-	return r;
-}
-
 double rerange(double orig_min,double orig_max,double new_min,double new_max,double value){
 	double portion=(value-orig_min)/(orig_max-orig_min);
 	return new_min+portion*(new_max-new_min);
@@ -59,7 +41,7 @@ vector<unsigned> range(unsigned lim){
 }
 
 void histogram(ostream& o,vector<int> v){
-	static const unsigned WIDTH=80;
+	//static const unsigned WIDTH=80;
 	auto mina=min(v),maxa=max(v);
 	auto d=mapf([=](int x){ return rerange(mina,maxa,0,80,x); },v);
 	for(auto i:d){
@@ -67,9 +49,6 @@ void histogram(ostream& o,vector<int> v){
 		o<<"\n";
 	}
 }
-
-//should probably move this to a header someplace
-typedef string Event_key;
 
 enum class Listing_type{TEAM,EVENT,MATCH};
 
@@ -104,66 +83,25 @@ map<string,vector<string>> get_flags(vector<string> args){
 	return r;
 }
 
-set<string> events(vector<Match_info> const& v){
-	set<string> r;
-	for(auto a:v) r|=a.event;
-	return r;
-}
-
-/*map<Team,Record> calculate_records(vector<Match_info> const& m){
-	map<Team,Record> r;
-	for(Match_info const& match:m){
-		auto v=values(match.alliances);
-		auto scores=mapf([](Match_info::Alliance a){ return a.score; },v);
-		assert(scores.size()==2); //not dealing with more than two alliances at the moment.  
-		if(scores[0]==scores[1]){
-			auto tie=[&](Team t){ return r[t].tie++; };
-			mapf(tie,teams(match));
-		}else{
-			auto win=[&](Team t){ return r[t].win++; };
-			auto loss=[&](Team t){ return r[t].loss++; };
-			auto teams=mapf([](Match_info::Alliance a){ return a.teams; },v);
-			if(scores[0]>scores[1]){
-				mapf(win,teams[0]);
-				mapf(loss,teams[1]);
-			}else{
-				mapf(loss,teams[0]);
-				mapf(win,teams[1]);
-			}
-		}
-	}
-	return r;
-}*/
-
-template<typename K,typename V>
-vector<pair<K,V>> to_pairs(map<K,V> m){
-	vector<pair<K,V>> r;
-	for(auto p:m) r|=p;
-	return r;
-}
-
-template<class Tuple,int N>
-struct Tuple_cmp{
-	static bool cmp(Tuple a,Tuple b){
-		auto av=get<N>(a);
-		auto bv=get<N>(b);
-		if(av<bv) return 1;
-		if(bv<av) return 0;
-		return Tuple_cmp<Tuple,N-1>::cmp(a,b);
+/*template<class Tuple,int V>
+struct Tuple_cmpd<tuple,V> m){
+	static bool cmp(Tuple a,Tuple b{
+		,N-1>::cmp(a,b);
 	}
 };
 
 template<class Tuple>
 struct Tuple_cmp<Tuple,0>{
 	static bool cmp(Tuple a,Tuple b){
-		return (get<0>(a)) < (get<0>(b));
+		return get<0>(a)) < (get<0>(b));
 	}
-};
+};*/
 
 template<typename Tuple,int COL>
 vector<Tuple> sort_tuples(vector<Tuple> v){
 	//eh...this might get pretty annoying to implement pretty fast.
-	sort(begin(v),end(v),Tuple_cmp<Tuple,COL>::cmp);
+//	sort(begin(v),end(v),Tuple_cmp<Tuple,COL>::cmp);
+	sort(begin(v),end(v));
 	return v;
 }
 
@@ -201,29 +139,6 @@ void print_html_table(Collection const& c){
 			)
 		)
 	);
-}
-
-vector<Match_info> with_team(vector<Match_info> const& m,Team t){
-	return filter([&](Match_info mi){ return teams(mi)&t; },m);
-}
-
-vector<Match_info> with_event(vector<Match_info> const& m,Event_key event){
-	return filter([&](Match_info mi){ return mi.event==event; },m);
-}
-
-//could be called 'team match result'
-enum class Match_result{WIN,LOSS,TIE};
-
-ostream& operator<<(ostream& o,Match_result m){
-	switch(m){
-		#define X(name) case Match_result::name: return o<<""#name;
-		X(WIN)
-		X(LOSS)
-		X(TIE)
-		#undef X
-		default:
-			assert(false);
-	}
 }
 
 struct Simple_match{
@@ -279,35 +194,6 @@ vector<pair<Match_info::Alliance,Match_result>> alliance_results(vector<Match_in
 	return flatten(mapf(alliance_result,m));
 }
 
-Record tally(Match_result m){
-	switch(m){
-		case Match_result::WIN: return Record{1,0,0};
-		case Match_result::LOSS: return Record{0,1,0};
-		case Match_result::TIE: return Record{0,0,1};
-		default:nyi
-	}
-}
-
-Record tally(vector<Match_result> v){
-	Record r;
-	for(auto a:v){
-		switch(a){
-			case Match_result::WIN:
-				r.win++;
-				break;
-			case Match_result::LOSS:
-				r.loss++;
-				break;
-			case Match_result::TIE:
-				r.tie++;
-				break;
-			default:
-				assert(false);
-		}
-	}
-	return r;
-}
-
 //all of the pairs of members of 's' where the first element is less than the second.
 template<typename T>
 set<pair<T,T>> pairs(set<T> s){
@@ -322,35 +208,12 @@ set<pair<T,T>> pairs(set<T> s){
 	return r;
 }
 
-vector<pair<Team,Team>> mates(Match_info::Alliance a){
-	vector<pair<Team,Team>> r;
-	nyi
-	return r;
-}
-
 template<typename T>
 map<unsigned,vector<T>> count2(vector<T> v){
 	map<unsigned,vector<T>> r;
 	for(auto p:count(v)){
 		r[p.second]|=p.first;
 	}
-	return r;
-}
-
-template<typename T>
-vector<T> reverse(set<T> s){
-	vector<T> r1,r;
-	for(auto a:s) r1|=a;
-	for(int i=r1.size()-1;i>=0;i--){
-		r|=r1[i];
-	}
-	return r;
-}
-
-template<typename T,unsigned LEN>
-set<T> to_set(array<T,LEN> a){
-	set<T> r;
-	for(auto elem:a) r|=elem;
 	return r;
 }
 
@@ -538,22 +401,8 @@ map<pair<Team,Team>,pair<Record,Record>> head_to_head1(vector<Match_info> const&
 	return r;
 }
 
-template<typename T>
-vector<T> reversed(vector<T> v){
-	vector<T> r;
-	for(int i=v.size()-1;i>=0;i--){
-		r|=v[i];
-	}
-	return r;
-}
-
 string to_event_key(string s){
 	return string("2013")+tolower(s);
-}
-
-template<typename T>
-pair<set<T>,set<T>> uniques(set<T> a,set<T> b){
-	return make_pair(a_and_not_b(a,b),a_and_not_b(b,a));
 }
 
 //returns 0-based number
@@ -599,18 +448,6 @@ map<Event_key,array<set<Team>,8>> finals_alliances(vector<Match_info> m){
 		}
 	}
 	return r;
-}
-
-vector<Match_info> eliminations(vector<Match_info> m){
-	return filter([](Match_info m){ return m.competition_level!=Competition_level::QUALS; },m);
-}
-
-vector<Match_info> finals(vector<Match_info> m){
-	return filter([](Match_info m){ return m.competition_level==Competition_level::FINALS; },m);
-}
-
-vector<Match_info> quals(vector<Match_info> m){
-	return filter([](Match_info m){ return m.competition_level==Competition_level::QUALS; },m);
 }
 
 struct Elim_matchup{
@@ -709,7 +546,7 @@ void correlate_picks(){
 	cout<<events<<"\n";
 	cout<<g<<"\n";
 	cout<<"sym:"<<symmetric_difference(events,g)<<"\n";
-	cout<<uniques(events,g)<<"\n";
+	cout<<symmetric_difference(events,g)<<"\n";
 	//map<string,pair<Event_picks,
 	auto alliances_by_matches=finals_alliances(matches(2013));
 	//for(auto a:f) cout<<a<<"\n";
@@ -766,6 +603,11 @@ set<Team> winners(Match_info m){
 	return teams(w[0]);
 }
 
+int awards(map<string,vector<string>> const& flags){
+	awards();
+	return 0;
+}
+
 int run_main(map<string,vector<string>> const& flags){
 	set<string> flags_used;
 	auto get_flag=[&](string name)->Maybe<vector<string>>{
@@ -782,6 +624,15 @@ int run_main(map<string,vector<string>> const& flags){
 
 	if(flags.find("project")!=flags.end()){
 		return project(flags);
+	}
+
+	if(flags.find("points")!=flags.end()){
+		points_demo();
+		return 0;
+	}
+
+	if(flags.find("awards")!=flags.end()){
+		return awards(flags);
 	}
 
 	auto y=get_flag_default("year","2013");

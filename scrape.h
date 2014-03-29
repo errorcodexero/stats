@@ -14,18 +14,19 @@ struct BEvent_details{
 	Maybe<std::string> location;
 	std::string key;
 	std::string year;//could actually make this an int
-	Maybe<std::string> start_date;
+	Maybe<Date> start_date;
 	std::string name;
 	std::vector<Team> teams;
 	bool official;
 	std::vector<std::string> matches;
 	std::string event_code;
-	Maybe<std::string> end_date;
+	Maybe<Date> end_date;
 	Maybe<std::string> name_short;
 	Maybe<bool> facebook_eid; //fix the type of this.
 };
 std::ostream& operator<<(std::ostream&,BEvent_details const&);
 
 BEvent_details get_details(std::string const& event_code);
+void awards();
 
 #endif

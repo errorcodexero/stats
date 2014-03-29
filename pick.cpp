@@ -19,7 +19,7 @@ ostream& operator<<(ostream& o,Alliance_result a){
 }
 
 ostream& operator<<(ostream& o,Alliance a){
-	o<<"Alliance("<<a.teams<<" "<<a.result<<")";
+	return o<<"Alliance("<<a.teams<<" "<<a.result<<")";
 }
 
 //eventually, should move to util.
@@ -172,4 +172,5 @@ int pick_main(){
 		auto lost=c[make_pair(t.second,t.first)];
 		cout<<t.first+1<<" "<<t.second+1<<"\t"<<won<<"-"<<lost<<"\t"<<((double)won/(won+lost))<<"\n";
 	}
+	return 0;
 }

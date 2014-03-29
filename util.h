@@ -205,4 +205,28 @@ std::vector<T> sorted(std::vector<T> v){
 	return v;
 }
 
+std::map<std::string,std::string> env_vars(char **envp);
+std::vector<std::string> args(int argc,char **argv);
+
+template<typename T>
+std::vector<T> reverse(std::set<T> s){
+	std::vector<T> r1,r;
+	for(auto a:s) r1|=a;
+	for(int i=r1.size()-1;i>=0;i--){
+		r|=r1[i];
+	}
+	return r;
+}
+
+template<typename T>
+std::vector<T> reversed(std::vector<T> v){
+	std::vector<T> r;
+	for(int i=v.size()-1;i>=0;i--){
+		r|=v[i];
+	}
+	return r;
+}
+
+int atoi(std::string const&);
+
 #endif

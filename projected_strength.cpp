@@ -23,13 +23,6 @@ double win_pcnt_last_year(Team team){
 	return win_portion(calculate_records(m)[team]);
 }
 
-template<typename T>
-vector<T> reversed(vector<T> v){
-	vector<T> r;
-	for(int i=v.size()-1;i>=0;i--) r|=v[i];
-	return r;
-}
-
 double get24thbest(vector<double> v){
 	v=reversed(sorted(v));
 	if(v.size()<24) return 0;//assert(v.size()>=24);
@@ -42,6 +35,9 @@ int project(map<string,vector<string>> flags){
 	auto nw_events=filter(nw_event,events);
 
 	auto matches2013=matches(2013);
+	for(unsigned i=1990;i<2013;i++){
+		matches2013|=matches(i);
+	}
 	auto records2013=calculate_records(matches2013);
 	auto old_win_pct=[&](Team team){ return win_portion(records2013[team]); };
 

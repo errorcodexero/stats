@@ -121,3 +121,28 @@ Maybe<double> mean_score(vector<Match_info::Alliance> const& v){
 	return mean(mapf([](Match_info::Alliance a){ return a.score; },v));
 }
 
+vector<Match_info> with_team(vector<Match_info> const& m,Team t){
+	return filter([&](Match_info mi){ return teams(mi)&t; },m);
+}
+
+vector<Match_info> with_event(vector<Match_info> const& m,Event_key event){
+	return filter([&](Match_info mi){ return mi.event==event; },m);
+}
+
+set<string> events(vector<Match_info> const& v){
+	set<string> r;
+	for(auto a:v) r|=a.event;
+	return r;
+}
+
+vector<Match_info> eliminations(vector<Match_info> m){
+	return filter([](Match_info m){ return m.competition_level!=Competition_level::QUALS; },m);
+}
+
+vector<Match_info> finals(vector<Match_info> m){
+	return filter([](Match_info m){ return m.competition_level==Competition_level::FINALS; },m);
+}
+
+vector<Match_info> quals(vector<Match_info> m){
+	return filter([](Match_info m){ return m.competition_level==Competition_level::QUALS; },m);
+}

@@ -301,23 +301,6 @@ vector<pair<pair<Team,Team>,Pair_result>> pairwise(Simple_match m){
 	return r;
 }
 
-//Like the 'group' function in SQL
-template<typename Func,typename T>
-auto segregate(Func f,vector<T> in)->map<decltype(f(in[0])),vector<T>>{
-	map<decltype(f(in[0])),vector<T>> r;
-	for(auto a:in){
-		r[f(a)]|=a;
-	}
-	return r;
-}
-
-template<typename Func,typename K,typename V>
-auto map_map(Func f,map<K,V> m)->map<K,decltype(f(begin(m)->second))>{
-	map<K,decltype(f(begin(m)->second))> r;
-	for(auto p:m) r[p.first]=f(p.second);
-	return r;
-}
-
 map<pair<Team,Team>,map<Pair_result,Default<unsigned,0>>> head_to_head(vector<Match_info> const& m){
 	auto a=mapf([](Match_info m){ return Simple_match(m); },m);
 	auto res=flatten(mapf(

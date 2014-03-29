@@ -7,8 +7,13 @@
 
 template<typename T>
 std::ostream& operator<<(std::ostream& o,std::set<T> const& s){
-	o<<"{ ";
-	for(auto& a:s) o<<a<<" ";
+	o<<"{";
+	unsigned left=s.size();
+	for(auto& a:s){
+		o<<a;
+		left--;
+		if(left) o<<",";
+	}
 	return o<<"}";
 }
 
@@ -78,6 +83,16 @@ std::vector<T> to_vector(std::set<T> s){
 	std::vector<T> r;
 	for(auto a:s) r|=a;
 	return r;
+}
+
+template<typename T>
+bool operator&(std::set<T> const& s,T t){
+	return s.count(t);
+}
+
+template<typename T>
+bool operator&(T t,std::set<T> const& s){
+	return s.count(t);
 }
 
 #endif

@@ -26,18 +26,6 @@ vector<pair<K,V>> map_to_pairs(map<K,V> m){
 	return r;
 }
 
-template<typename A,typename B>
-pair<B,A> reverse(pair<A,B> p){
-	return make_pair(p.second,p.first);
-}
-
-template<typename A,typename B>
-vector<pair<B,A>> reverse_pairs(vector<pair<A,B>> v){
-	vector<pair<B,A>> r;
-	for(auto a:v) r|=reverse(a);
-	return r;
-}
-
 string escape_to_commandline(char c){
 	//NOTE: If you ever want to run this as a cgi script or something, you will neeed to make this better.
 	stringstream ss;
@@ -613,17 +601,6 @@ vector<Match_info> matches(int year,Team team){
 vector<Match_info::Alliance> alliances(int year,Team team){
 	matches(year,team);
 	nyi
-}
-
-template<typename Collection>
-auto enumerate(Collection const& v)->vector<pair<unsigned,ELEMENT(v)>>{
-	vector<pair<unsigned,ELEMENT(v)>> r;
-	unsigned i=0;
-	for(auto e:v){
-		r.push_back(make_pair(i,e));
-		i++;
-	}
-	return r;
 }
 
 template<typename Collection>

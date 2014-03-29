@@ -26,8 +26,8 @@
 #define PRINT(x) { std::cout<<(#x)<<"="<<(x)<<"\n"; }
 #define PRINT_TO(dest,val) { dest<<#val<<"="<<val; }
 
-#define RM_REF(X) typename remove_reference<X>::type
-#define RM_CONST(X) typename remove_const<X>::type
+#define RM_REF(X) typename std::remove_reference<X>::type
+#define RM_CONST(X) typename std::remove_const<X>::type
 #define ELEMENT(X) RM_CONST(RM_REF(decltype(*begin(X))))
 
 template<typename A,typename B>
@@ -104,6 +104,23 @@ Collection filter(Func f,Collection const& in){
 	for(auto elem:in){
 		if(f(elem)) r|=elem;
 	}
+	return r;
+}
+
+//Like the 'group' function in SQL
+template<typename Func,typename T>
+auto segregate(Func f,std::vector<T> in)->std::map<decltype(f(in[0])),std::vector<T>>{
+	std::map<decltype(f(in[0])),std::vector<T>> r;
+	for(auto a:in){
+		r[f(a)]|=a;
+	}
+	return r;
+}
+
+template<typename Func,typename K,typename V>
+auto map_map(Func f,std::map<K,V> m)->std::map<K,decltype(f(begin(m)->second))>{
+	std::map<K,decltype(f(begin(m)->second))> r;
+	for(auto p:m) r[p.first]=f(p.second);
 	return r;
 }
 
@@ -226,6 +243,29 @@ std::vector<T> reversed(std::vector<T> v){
 	std::vector<T> r;
 	for(int i=v.size()-1;i>=0;i--){
 		r|=v[i];
+	}
+	return r;
+}
+
+template<typename A,typename B>
+std::pair<B,A> reverse(std::pair<A,B> p){
+	return make_pair(p.second,p.first);
+}
+
+template<typename A,typename B>
+std::vector<std::pair<B,A>> reverse_pairs(std::vector<std::pair<A,B>> v){
+	std::vector<std::pair<B,A>> r;
+	for(auto a:v) r|=reverse(a);
+	return r;
+}
+
+template<typename Collection>
+auto enumerate(Collection const& v)->std::vector<std::pair<unsigned,ELEMENT(v)>>{
+	std::vector<std::pair<unsigned,ELEMENT(v)>> r;
+	unsigned i=0;
+	for(auto e:v){
+		r.push_back(std::make_pair(i,e));
+		i++;
 	}
 	return r;
 }

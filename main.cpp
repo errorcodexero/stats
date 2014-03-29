@@ -249,7 +249,7 @@ struct Simple_match{
 };
 
 ostream& operator<<(ostream& o,Simple_match m){
-	return o<<"Simple_match("<<m.score<<" "<<m.teams<<")";
+	nyi//return o<<"Simple_match("<<m.score<<" "<<m.teams<<")";
 }
 
 vector<Simple_match> simple_matches(vector<Match_info> const& m){

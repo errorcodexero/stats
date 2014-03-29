@@ -1,0 +1,153 @@
+1 	154 	4488 - ShockWave 	78 [Oregon City Event] 	71 [Wilsonville Event] 	-- 	5
+2 	138 	2522 - Royal Robotics 	65 [Glacier Peak Event] 	73 [Mount Vernon Event] 	-- 	0
+3 	125 	1425 - Error Code Xero 	60 [Oregon City Event] 	65 [Wilsonville Event] 	-- 	0
+4 	121 	2046 - Bear Metal 	71 [Auburn Mountainview Event] 	50 [Mount Vernon Event] 	-- 	0
+5 	119 	2557 - SOTAbots 	59 [Auburn Mountainview Event] 	60 [Eastern Washington University Event] 	-- 	0
+6 	117 	4911 - CyberKnights 	67 [Glacier Peak Event] 	40 [Shorewood Event] 	-- 	10
+7 	115 	4915 - Spartronics 	48 [Glacier Peak Event] 	57 [Shorewood Event] 	-- 	10
+8 	112 	2471 - Team Mean Machine 	71 [Oregon City Event] 	41 [Wilsonville Event] 	-- 	0
+9 	110 	4077 - M*A*S*H 	47 [Glacier Peak Event] 	63 [Shorewood Event] 	-- 	0
+10 	105 	1318 - Issaquah Robotics Society 	47 [Glacier Peak Event] 	58 [Shorewood Event] 	-- 	0
+11 	95 	2928 - Viking Robotics 	25 [Glacier Peak Event] 	70 [Mount Vernon Event] 	-- 	0
+12 	95 	360 - The Revolution 	35 [Auburn Mountainview Event] 	60 [Eastern Washington University Event] 	-- 	0
+13 	91 	3070 - Team Pronto 	40 [Mount Vernon Event] 	51 [Shorewood Event] 	-- 	0
+14 	91 	4918 - The Roboctopi 	25 [Glacier Peak Event] 	56 [Mount Vernon Event] 	-- 	10
+15 	87 	488 - Team XBot 	58 [Glacier Peak Event] 	29 [Shorewood Event] 	-- 	0
+16 	87 	948 - NRG (Newport Robotics Group) 	51 [Mount Vernon Event] 	36 [Shorewood Event] 	-- 	0
+17 	84 	4125 - Confidential 	74 [Eastern Washington University Event] 	10 [Central Washington University Event] 	-- 	0
+18 	80 	4559 - FIRST DRaFT 	33 [Auburn Mountainview Event] 	42 [Shorewood Event] 	-- 	5
+19 	80 	492 - Titan Robotics Club 	56 [Glacier Peak Event] 	24 [Shorewood Event] 	-- 	0
+20 	79 	2412 - Robototes 	51 [Glacier Peak Event] 	28 [Shorewood Event] 	-- 	0
+21 	77 	4061 - SciBorgs 	69 [Eastern Washington University Event] 	8 [Central Washington University Event] 	-- 	0
+22 	75 	2907 - Lion Robotics 	70 [Auburn Mountainview Event] 	5 [Auburn Event] 	-- 	0
+23 	73 	2411 - Rebel @lliance 	29 [Oregon City Event] 	44 [Wilsonville Event] 	-- 	0
+24 	73 	3393 - Horns of Havoc 	63 [Auburn Mountainview Event] 	10 [Auburn Event] 	-- 	0
+25 	70 	3674 - 4-H Clover Bots 	42 [Oregon City Event] 	28 [Wilsonville Event] 	-- 	0
+26 	70 	1540 - Flaming Chickens 	39 [Oregon City Event] 	31 [Wilsonville Event] 	-- 	0
+27 	69 	2903 - NeoBots 	40 [Mount Vernon Event] 	29 [Shorewood Event] 	-- 	0
+28 	68 	2002 - Tualatin Robotics 	29 [Oregon City Event] 	39 [Wilsonville Event] 	-- 	0
+29 	67 	4131 - Iron Patriots 	26 [Auburn Mountainview Event] 	41 [Shorewood Event] 	-- 	0
+30 	66 	4542 - Titanium Talons 	16 [Glacier Peak Event] 	45 [Shorewood Event] 	-- 	5
+31 	63 	1294 - Top Gun 	36 [Auburn Mountainview Event] 	27 [Mount Vernon Event] 	-- 	0
+32 	61 	3238 - Cyborg Ferrets 	49 [Mount Vernon Event] 	12 [Central Washington University Event] 	-- 	0
+33 	61 	2635 - Lake Monsters 	43 [Oregon City Event] 	18 [Wilsonville Event] 	-- 	0
+34 	59 	2811 - StormBots 	19 [Oregon City Event] 	40 [Wilsonville Event] 	-- 	0
+35 	58 	3131 - Gladiators 	26 [Oregon City Event] 	32 [Wilsonville Event] 	-- 	0
+36 	55 	2374 - Crusader Bots 	20 [Oregon City Event] 	35 [Wilsonville Event] 	-- 	0
+37 	55 	2990 - Hotwire 	15 [Auburn Mountainview Event] 	40 [Wilsonville Event] 	-- 	0
+38 	54 	4057 - KB Bots 	16 [Oregon City Event] 	38 [Wilsonville Event] 	-- 	0
+39 	54 	4030 - NullPointerException 	24 [Glacier Peak Event] 	30 [Mount Vernon Event] 	-- 	0
+40 	53 	4726 - Robo Dynasty 	8 [Auburn Mountainview Event] 	40 [Eastern Washington University Event] 	-- 	5
+41 	52 	955 - CV Robotics 	52 [Oregon City Event] 	Not Played 	-- 	0
+42 	52 	4652 - WolfTech 	9 [Oregon City Event] 	38 [Eastern Washington University Event] 	-- 	5
+43 	52 	2930 - Glacier Peak Sonic Squirrels 	30 [Glacier Peak Event] 	22 [Mount Vernon Event] 	-- 	0
+44 	52 	4450 - Olympia Robotics Federation 	39 [Auburn Mountainview Event] 	8 [Auburn Event] 	-- 	5
+45 	50 	1258 - SeaBot 	40 [Mount Vernon Event] 	10 [Shorewood Event] 	-- 	0
+46 	50 	3220 - Mechanics of Mayhem 	29 [Auburn Mountainview Event] 	21 [Eastern Washington University Event] 	-- 	0
+47 	50 	4089 - Stealth Robotics 	28 [Auburn Mountainview Event] 	22 [Mount Vernon Event] 	-- 	0
+48 	50 	1983 - Skunk Works Robotics 	40 [Eastern Washington University Event] 	10 [Auburn Event] 	-- 	0
+49 	49 	2923 - Aggies 	43 [Eastern Washington University Event] 	6 [Central Washington University Event] 	-- 	0
+50 	49 	4513 - Circuit Breakers 	32 [Eastern Washington University Event] 	12 [Central Washington University Event] 	-- 	5
+51 	49 	3588 - the Talon 	39 [Auburn Mountainview Event] 	10 [Central Washington University Event] 	-- 	0
+52 	49 	4681 - Murphy's law 	22 [Glacier Peak Event] 	22 [Shorewood Event] 	-- 	5
+53 	48 	4038 - Binary Robotics 	46 [Glacier Peak Event] 	2 [Central Washington University Event] 	-- 	0
+54 	47 	2733 - Pigmice 	30 [Oregon City Event] 	17 [Wilsonville Event] 	-- 	0
+55 	47 	4654 - Mountaineers 	17 [Glacier Peak Event] 	25 [Mount Vernon Event] 	-- 	5
+56 	47 	2927 - Pi Rho Techs 	35 [Auburn Mountainview Event] 	12 [Auburn Event] 	-- 	0
+57 	45 	997 - Spartan Robotics 	45 [Oregon City Event] 	Not Played 	-- 	0
+58 	45 	2550 - Skynet 	45 [Oregon City Event] 	Not Played 	-- 	0
+59 	45 	2093 - Bowtie Brigade 	6 [Oregon City Event] 	39 [Wilsonville Event] 	-- 	0
+60 	45 	5085 - LakerBots 	35 [Wilsonville Event] 	Not Played 	-- 	10
+61 	45 	4205 - ROBOCUBS 	23 [Glacier Peak Event] 	22 [Mount Vernon Event] 	-- 	0
+62 	44 	956 - Eagle Cybertechnology 	44 [Wilsonville Event] 	Not Played 	-- 	0
+63 	44 	2521 - SERT 	44 [Wilsonville Event] 	Not Played 	-- 	0
+64 	43 	2976 - Spartabots 	34 [Glacier Peak Event] 	9 [Auburn Event] 	-- 	0
+65 	43 	3663 - CPR - Cedar Park Robotics 	36 [Mount Vernon Event] 	7 [Auburn Event] 	-- 	0
+66 	43 	4120 - Jagwires 	41 [Eastern Washington University Event] 	2 [Central Washington University Event] 	-- 	0
+67 	43 	4051 - Sabin-Sharks 	17 [Oregon City Event] 	26 [Wilsonville Event] 	-- 	0
+68 	43 	2517 - Green Wrenches 	17 [Oregon City Event] 	26 [Wilsonville Event] 	-- 	0
+69 	42 	2929 - JAGBOTS 	34 [Auburn Mountainview Event] 	8 [Auburn Event] 	-- 	0
+70 	42 	3636 - Generals 	14 [Oregon City Event] 	28 [Wilsonville Event] 	-- 	0
+71 	41 	4579 - RoboEagles 	27 [Auburn Mountainview Event] 	9 [Auburn Event] 	-- 	5
+72 	40 	4772 - Optimistic Skyz 	29 [Auburn Mountainview Event] 	6 [Auburn Event] 	-- 	5
+73 	40 	1595 - Dragons 	28 [Eastern Washington University Event] 	12 [Central Washington University Event] 	-- 	0
+74 	40 	4980 - Canine Crusaders 	22 [Eastern Washington University Event] 	8 [Central Washington University Event] 	-- 	10
+75 	39 	4608 - Duct Tape Warriors 	32 [Eastern Washington University Event] 	2 [Central Washington University Event] 	-- 	5
+76 	39 	1899 - Saints Robotics 	18 [Glacier Peak Event] 	21 [Shorewood Event] 	-- 	0
+77 	39 	3786 - Chargers 	32 [Auburn Mountainview Event] 	7 [Auburn Event] 	-- 	0
+78 	39 	5111 - SaxonBots 	17 [Eastern Washington University Event] 	12 [Central Washington University Event] 	-- 	10
+79 	38 	3237 - Bionic Braves 	36 [Auburn Mountainview Event] 	2 [Auburn Event] 	-- 	0
+80 	37 	2980 - The Whidbey Island Wild Cats 	29 [Mount Vernon Event] 	8 [Central Washington University Event] 	-- 	0
+81 	37 	3219 - TREAD 	33 [Mount Vernon Event] 	4 [Auburn Event] 	-- 	0
+82 	37 	5198 - RoboKnight Force 	27 [Oregon City Event] 	Not Played 	-- 	10
+83 	36 	1778 - Chill Out..! 	16 [Mount Vernon Event] 	20 [Shorewood Event] 	-- 	0
+84 	35 	3693 - GearHead Pirates 	27 [Eastern Washington University Event] 	8 [Central Washington University Event] 	-- 	0
+85 	35 	3574 - HIGH-TEKERZ 	29 [Oregon City Event] 	6 [Auburn Event] 	-- 	0
+86 	34 	3789 - On Track Academy 	28 [Eastern Washington University Event] 	6 [Central Washington University Event] 	-- 	0
+87 	34 	2147 - CHUCK 	28 [Eastern Washington University Event] 	6 [Auburn Event] 	-- 	0
+88 	34 	2149 - CV Bearbots 	22 [Eastern Washington University Event] 	12 [Central Washington University Event] 	-- 	0
+89 	34 	3787 - Wild Robotocats 	23 [Glacier Peak Event] 	11 [Shorewood Event] 	-- 	0
+90 	34 	3711 - Iron Mustang 	26 [Eastern Washington University Event] 	8 [Central Washington University Event] 	-- 	0
+91 	33 	4060 - S.W.A.G. 	15 [Auburn Mountainview Event] 	18 [Mount Vernon Event] 	-- 	0
+92 	33 	3586 - Pride in the Tribe-Caveman Robotics 	15 [Auburn Mountainview Event] 	18 [Eastern Washington University Event] 	-- 	0
+93 	33 	2944 - Titanium Tigers 	29 [Eastern Washington University Event] 	4 [Central Washington University Event] 	-- 	0
+94 	33 	3812 - Bits & Bots 	23 [Oregon City Event] 	10 [Central Washington University Event] 	-- 	0
+95 	33 	5295 - Aldernating Current 	11 [Auburn Mountainview Event] 	12 [Shorewood Event] 	-- 	10
+96 	32 	4461 - RAMbotics 	23 [Shorewood Event] 	4 [Auburn Event] 	-- 	5
+97 	32 	4512 - BEAR Bots 	6 [Glacier Peak Event] 	21 [Mount Vernon Event] 	-- 	5
+98 	31 	949 - Wolverine Robotics 	23 [Glacier Peak Event] 	8 [Shorewood Event] 	-- 	0
+99 	31 	2192 - YAK Attack 	31 [Auburn Mountainview Event] 	Not Played 	-- 	0
+100 	31 	2660 - Pengbots 	25 [Glacier Peak Event] 	6 [Mount Vernon Event] 	-- 	0
+101 	31 	3268 - Viking Robotics 	14 [Glacier Peak Event] 	17 [Shorewood Event] 	-- 	0
+102 	30 	1510 - Wildcats 	19 [Mount Vernon Event] 	11 [Wilsonville Event] 	-- 	0
+103 	29 	4309 - 4-H Botsmiths 	6 [Glacier Peak Event] 	23 [Mount Vernon Event] 	-- 	0
+104 	28 	3826 - SkyNet Robotics North West 	28 [Glacier Peak Event] 	0 [Auburn Event] 	-- 	0
+105 	28 	2926 - Robo Sparks 	24 [Eastern Washington University Event] 	4 [Central Washington University Event] 	-- 	0
+106 	28 	3684 - Electric Eagles 	24 [Glacier Peak Event] 	4 [Auburn Event] 	-- 	0
+107 	27 	4682 - Brave Bots 	13 [Glacier Peak Event] 	9 [Shorewood Event] 	-- 	5
+108 	26 	3781 - 4-HPenneyBots 	12 [Auburn Mountainview Event] 	14 [Shorewood Event] 	-- 	0
+109 	26 	4132 - Scotbots 	14 [Oregon City Event] 	12 [Wilsonville Event] 	-- 	0
+110 	25 	3575 - Okanogan FFA 	19 [Eastern Washington University Event] 	6 [Central Washington University Event] 	-- 	0
+111 	25 	4127 - LoggerBots 	25 [Oregon City Event] 	Not Played 	-- 	0
+112 	25 	2605 - Sehome Seamonsters 	23 [Mount Vernon Event] 	2 [Central Washington University Event] 	-- 	0
+113 	24 	957 - SWARM 	24 [Wilsonville Event] 	Not Played 	-- 	0
+114 	24 	3221 - KM Royals 	20 [Auburn Mountainview Event] 	4 [Auburn Event] 	-- 	0
+115 	24 	2906 - Spanaway Lake Botworx 	16 [Auburn Mountainview Event] 	8 [Auburn Event] 	-- 	0
+116 	23 	4469 - TJ 	8 [Auburn Mountainview Event] 	10 [Auburn Event] 	-- 	5
+117 	22 	847 - PHRED 	22 [Oregon City Event] 	Not Played 	-- 	0
+118 	22 	3673 - C.Y.B.O.R.G. Seagulls 	22 [Oregon City Event] 	Not Played 	-- 	0
+119 	21 	4495 - Tigers 	6 [Eastern Washington University Event] 	10 [Central Washington University Event] 	-- 	5
+120 	20 	3024 - My Favorite Team 	20 [Oregon City Event] 	Not Played 	-- 	0
+121 	20 	4662 - Tribal Tech 	15 [Wilsonville Event] 	Not Played 	-- 	5
+122 	20 	2542 - Go4bots 	12 [Oregon City Event] 	8 [Wilsonville Event] 	-- 	0
+123 	20 	3223 - POKER Robotics 	14 [Glacier Peak Event] 	6 [Central Washington University Event] 	-- 	0
+124 	19 	2910 - Jack in the Bot 	13 [Glacier Peak Event] 	6 [Central Washington University Event] 	-- 	0
+125 	19 	3218 - Panther Robotics 	13 [Auburn Mountainview Event] 	6 [Auburn Event] 	-- 	0
+126 	17 	4457 - ACE 	12 [Oregon City Event] 	Not Played 	-- 	5
+127 	17 	4683 - Full-metal Robotics 	6 [Glacier Peak Event] 	6 [Mount Vernon Event] 	-- 	5
+128 	16 	4104 - Blackhawks 	12 [Eastern Washington University Event] 	4 [Central Washington University Event] 	-- 	0
+129 	16 	2148 - Mechaknights 	10 [Eastern Washington University Event] 	6 [Central Washington University Event] 	-- 	0
+130 	16 	3831 - Da Bears 	10 [Eastern Washington University Event] 	6 [Central Washington University Event] 	-- 	0
+131 	16 	4082 - Ranching Robots 	10 [Eastern Washington University Event] 	6 [Central Washington University Event] 	-- 	0
+132 	15 	4304 - Iron Rams 	13 [Auburn Mountainview Event] 	2 [Auburn Event] 	-- 	0
+133 	15 	4692 - Metal Mallards 	4 [Oregon City Event] 	6 [Wilsonville Event] 	-- 	5
+134 	14 	2922 - RoboCon 	8 [Mount Vernon Event] 	6 [Auburn Event] 	-- 	0
+135 	14 	2942 - Panda Machine 	10 [Shorewood Event] 	4 [Auburn Event] 	-- 	0
+136 	14 	3049 - Fluffy Robotics 	10 [Shorewood Event] 	4 [Auburn Event] 	-- 	0
+137 	14 	3876 - Mabton LugNutz 	10 [Eastern Washington University Event] 	4 [Central Washington University Event] 	-- 	0
+138 	14 	4173 - Bulldogs 	8 [Mount Vernon Event] 	6 [Central Washington University Event] 	-- 	0
+139 	14 	4043 - NerdHerd 	14 [Wilsonville Event] 	Not Played 	-- 	0
+140 	12 	2915 - Riverdale Robotics/Pandamonium 	12 [Oregon City Event] 	Not Played 	-- 	0
+141 	12 	3576 - Clover Park High School Warriors 	8 [Auburn Mountainview Event] 	4 [Auburn Event] 	-- 	0
+142 	10 	3681 - Raiders FRC 	2 [Glacier Peak Event] 	8 [Shorewood Event] 	-- 	0
+143 	10 	4180 - Iron Riders 	8 [Shorewood Event] 	2 [Auburn Event] 	-- 	0
+144 	9 	753 - High Desert Droids 	5 [Oregon City Event] 	4 [Central Washington University Event] 	-- 	0
+145 	8 	4110 - DEEP SPACE NINERS 	8 [Wilsonville Event] 	Not Played 	-- 	0
+146 	6 	1359 - Scalawags 	6 [Central Washington University Event] 	Not Played 	-- 	0
+147 	6 	1432 - Mahr's Metal Beavers 	6 [Wilsonville Event] 	Not Played 	-- 	0
+148 	6 	1571 - Error404 	6 [Oregon City Event] 	Not Played 	-- 	0
+149 	6 	3192 - Tiger Bytes 	6 [Wilsonville Event] 	Not Played 	-- 	0
+150 	6 	4105 - ChiefBotsFTS 	6 [Eastern Washington University Event] 	Not Played 	-- 	0
+151 	4 	2555 - RoboRams 	2 [Auburn Mountainview Event] 	2 [Auburn Event] 	-- 	0
+152 	4 	3712 - RoboCats 	4 [Central Washington University Event] 	Not Played 	-- 	0
+153 	0 	3286 - the rocket surgeons 	0 [Central Washington University Event] 	Not Played 	-- 	0

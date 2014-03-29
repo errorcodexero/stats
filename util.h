@@ -64,8 +64,11 @@ std::vector<T>& operator|=(std::vector<T> &v,std::vector<T> a){
 
 template<typename T>
 std::ostream& operator<<(std::ostream& o,std::vector<T> const& v){
-	o<<"[ ";
-	for(auto& elem:v) o<<elem<<" ";
+	o<<"[";
+	for(unsigned i=0;i<v.size();i++){
+		o<<v[i];
+		if(i+1<v.size()) o<<",";
+	}
 	return o<<"]";
 }
 

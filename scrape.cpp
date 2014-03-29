@@ -25,13 +25,6 @@ string escape_to_commandline(char c){
 	return ss.str();
 }
 
-//remove spaces at the end of the string
-string rstrip(string const& s){
-	int i=0;
-	while(s[s.size()-1-i]==' ') i++;
-	return s.substr(0,s.size()-i);
-}
-
 string escape_to_commandline(string const& s){
 	stringstream ss;
 	for(auto c:s) ss<<escape_to_commandline(c);

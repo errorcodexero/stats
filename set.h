@@ -66,6 +66,11 @@ std::set<T> to_set(std::vector<T> const& v){
 	return r;
 }
 
+template<typename T,unsigned long LEN>
+std::set<T> to_set(std::array<T,LEN> const& a){
+	nyi
+}
+
 template<typename T>
 std::vector<T> to_vector(std::set<T> s){
 	std::vector<T> r;

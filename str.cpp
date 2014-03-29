@@ -35,3 +35,19 @@ string tolower(string const& s){
 	return ss.str();
 }
 
+//remove spaces at the end of the string
+string rstrip(string const& s){
+	int i=0;
+	while(s[s.size()-1-i]==' ') i++;
+	return s.substr(0,s.size()-i);
+}
+
+string lstrip(string const& s){
+	unsigned i=0;
+	while(i<s.size() && s[i]==' ') i++;
+	return s.substr(i,s.size());
+}
+
+string strip(string const& s){
+	return rstrip(lstrip(s));
+}

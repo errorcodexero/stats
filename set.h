@@ -30,6 +30,12 @@ std::set<T>& operator|=(std::set<T>& a,Collection const& b){
 }
 
 template<typename T>
+std::set<T> operator|(std::set<T> a,std::set<T> const& b){
+	for(auto elem:b) a|=elem;
+	return a;
+}
+
+template<typename T>
 bool contains(std::set<T> const& s,T const& t){
 	return s.find(t)!=end(s);
 }

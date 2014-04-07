@@ -1,0 +1,153 @@
+1 	154 	4488 - ShockWave 	78 [Oregon City District Event] 	71 [Wilsonville District Event] 	Qualified 	--- 	5
+2 	138 	2522 - Royal Robotics 	65 [Glacier Peak District Event] 	73 [Mount Vernon District Event] 	Qualified 	--- 	0
+3 	130 	4061 - SciBorgs 	69 [Eastern Washington University District Event] 	61 [Central Washington University District Event] 	Qualified 	--- 	0
+4 	125 	1425 - Error Code Xero 	60 [Oregon City District Event] 	65 [Wilsonville District Event] 	Qualified 	--- 	0
+5 	121 	3238 - Cyborg Ferrets 	49 [Mount Vernon District Event] 	72 [Central Washington University District Event] 	Qualified 	--- 	0
+6 	121 	2046 - Bear Metal 	71 [Auburn Mountainview District Event] 	50 [Mount Vernon District Event] 	Qualified 	--- 	0
+7 	119 	2557 - SOTAbots 	59 [Auburn Mountainview District Event] 	60 [Eastern Washington University District Event] 	Qualified 	--- 	0
+8 	117 	4911 - CyberKnights 	67 [Glacier Peak District Event] 	40 [Shorewood District Event] 	Qualified 	--- 	10
+9 	115 	4915 - Spartronics 	48 [Glacier Peak District Event] 	57 [Shorewood District Event] 	Qualified 	--- 	10
+10 	113 	4125 - Confidential 	74 [Eastern Washington University District Event] 	39 [Central Washington University District Event] 	Qualified 	--- 	0
+11 	112 	2471 - Team Mean Machine 	71 [Oregon City District Event] 	41 [Wilsonville District Event] 	Qualified 	--- 	0
+12 	110 	4077 - M*A*S*H 	47 [Glacier Peak District Event] 	63 [Shorewood District Event] 	Qualified 	--- 	0
+13 	109 	2907 - Lion Robotics 	70 [Auburn Mountainview District Event] 	39 [Auburn District Event] 	Qualified 	--- 	0
+14 	107 	1983 - Skunk Works Robotics 	40 [Eastern Washington University District Event] 	67 [Auburn District Event] 	Qualified 	--- 	0
+15 	106 	3588 - the Talon 	39 [Auburn Mountainview District Event] 	67 [Central Washington University District Event] 	Qualified 	--- 	0
+16 	105 	1318 - Issaquah Robotics Society 	47 [Glacier Peak District Event] 	58 [Shorewood District Event] 	Qualified 	--- 	0
+17 	99 	955 - CV Robotics 	52 [Oregon City District Event] 	47 (IP) [Oregon State University District Event] 	Qualified 	--- 	0
+18 	97 	997 - Spartan Robotics 	45 [Oregon City District Event] 	52 (IP) [Oregon State University District Event] 	Qualified 	--- 	0
+19 	95 	2928 - Viking Robotics 	25 [Glacier Peak District Event] 	70 [Mount Vernon District Event] 	Qualified 	--- 	0
+20 	95 	2521 - SERT 	44 [Wilsonville District Event] 	51 (IP) [Oregon State University District Event] 	Qualified 	--- 	0
+21 	95 	360 - The Revolution 	35 [Auburn Mountainview District Event] 	60 [Eastern Washington University District Event] 	Qualified 	--- 	0
+22 	95 	3393 - Horns of Havoc 	63 [Auburn Mountainview District Event] 	32 [Auburn District Event] 	Qualified 	--- 	0
+23 	94 	2550 - Skynet 	45 [Oregon City District Event] 	49 (IP) [Oregon State University District Event] 	Qualified 	--- 	0
+24 	91 	3070 - Team Pronto 	40 [Mount Vernon District Event] 	51 [Shorewood District Event] 	Qualified 	--- 	0
+25 	91 	4918 - The Roboctopi 	25 [Glacier Peak District Event] 	56 [Mount Vernon District Event] 	Qualified 	--- 	10
+26 	89 	1595 - Dragons 	28 [Eastern Washington University District Event] 	61 [Central Washington University District Event] 	Qualified 	--- 	0
+27 	88 	4450 - Olympia Robotics Federation 	39 [Auburn Mountainview District Event] 	44 [Auburn District Event] 	Qualified 	--- 	5
+28 	87 	488 - Team XBot 	58 [Glacier Peak District Event] 	29 [Shorewood District Event] 	Qualified 	--- 	0
+29 	87 	948 - NRG (Newport Robotics Group) 	51 [Mount Vernon District Event] 	36 [Shorewood District Event] 	Qualified 	--- 	0
+30 	82 	3663 - CPR - Cedar Park Robotics 	36 [Mount Vernon District Event] 	46 [Auburn District Event] 	Qualified 	--- 	0
+31 	80 	4559 - FIRST DRaFT 	33 [Auburn Mountainview District Event] 	42 [Shorewood District Event] 	Qualified 	--- 	5
+32 	80 	492 - Titan Robotics Club 	56 [Glacier Peak District Event] 	24 [Shorewood District Event] 	Qualified 	--- 	0
+33 	79 	2412 - Robototes 	51 [Glacier Peak District Event] 	28 [Shorewood District Event] 	Qualified 	--- 	0
+34 	73 	4038 - Binary Robotics 	46 [Glacier Peak District Event] 	27 [Central Washington University District Event] 	Qualified 	--- 	0
+35 	73 	2411 - Rebel @lliance 	29 [Oregon City District Event] 	44 [Wilsonville District Event] 	Qualified 	--- 	0
+36 	73 	5111 - SaxonBots 	17 [Eastern Washington University District Event] 	46 [Central Washington University District Event] 	Qualified 	--- 	10
+37 	71 	2923 - Aggies 	43 [Eastern Washington University District Event] 	28 [Central Washington University District Event] 	Qualified 	--- 	0
+38 	71 	3789 - On Track Academy 	28 [Eastern Washington University District Event] 	43 [Central Washington University District Event] 	Qualified 	--- 	0
+39 	71 	3812 - Bits & Bots 	23 [Oregon City District Event] 	48 [Central Washington University District Event] 	Qualified 	--- 	0
+40 	70 	3674 - 4-H Clover Bots 	42 [Oregon City District Event] 	28 [Wilsonville District Event] 	Qualified 	--- 	0
+41 	70 	1540 - Flaming Chickens 	39 [Oregon City District Event] 	31 [Wilsonville District Event] 	Qualified 	--- 	0
+42 	70 	5085 - LakerBots 	35 [Wilsonville District Event] 	25 (IP) [Oregon State University District Event] 	Qualified 	--- 	10
+43 	69 	2903 - NeoBots 	40 [Mount Vernon District Event] 	29 [Shorewood District Event] 	Qualified 	--- 	0
+44 	69 	2927 - Pi Rho Techs 	35 [Auburn Mountainview District Event] 	34 [Auburn District Event] 	Qualified 	--- 	0
+45 	68 	2002 - Tualatin Robotics 	29 [Oregon City District Event] 	39 [Wilsonville District Event] 	Qualified 	--- 	0
+46 	67 	4131 - Iron Patriots 	26 [Auburn Mountainview District Event] 	41 [Shorewood District Event] 	Qualified 	--- 	0
+47 	67 	2149 - CV Bearbots 	22 [Eastern Washington University District Event] 	45 [Central Washington University District Event] 	Qualified 	--- 	0
+48 	66 	4542 - Titanium Talons 	16 [Glacier Peak District Event] 	45 [Shorewood District Event] 	Qualified 	--- 	5
+49 	63 	1294 - Top Gun 	36 [Auburn Mountainview District Event] 	27 [Mount Vernon District Event] 	Qualified 	--- 	0
+50 	63 	3574 - HIGH-TEKERZ 	29 [Oregon City District Event] 	34 [Auburn District Event] 	Qualified 	--- 	0
+51 	62 	2147 - CHUCK 	28 [Eastern Washington University District Event] 	34 [Auburn District Event] 	Qualified 	--- 	0
+52 	62 	956 - Eagle Cybertechnology 	44 [Wilsonville District Event] 	18 (IP) [Oregon State University District Event] 	Qualified 	--- 	0
+53 	62 	3711 - Iron Mustang 	26 [Eastern Washington University District Event] 	36 [Central Washington University District Event] 	Qualified 	--- 	0
+54 	62 	4980 - Canine Crusaders 	22 [Eastern Washington University District Event] 	30 [Central Washington University District Event] 	Qualified 	--- 	10
+55 	61 	2635 - Lake Monsters 	43 [Oregon City District Event] 	18 [Wilsonville District Event] 	Qualified 	--- 	0
+56 	60 	4513 - Circuit Breakers 	32 [Eastern Washington University District Event] 	23 [Central Washington University District Event] 	Qualified 	--- 	5
+57 	59 	4457 - ACE 	12 [Oregon City District Event] 	42 (IP) [Oregon State University District Event] 	Qualified 	--- 	5
+58 	59 	2976 - Spartabots 	34 [Glacier Peak District Event] 	25 [Auburn District Event] 	Qualified 	--- 	0
+59 	59 	4120 - Jagwires 	41 [Eastern Washington University District Event] 	18 [Central Washington University District Event] 	Qualified 	--- 	0
+60 	59 	2811 - StormBots 	19 [Oregon City District Event] 	40 [Wilsonville District Event] 	Qualified 	--- 	0
+61 	58 	3131 - Gladiators 	26 [Oregon City District Event] 	32 [Wilsonville District Event] 	Qualified 	--- 	0
+62 	58 	4127 - LoggerBots 	25 [Oregon City District Event] 	33 (IP) [Oregon State University District Event] 	Qualified 	--- 	0
+63 	56 	3237 - Bionic Braves 	36 [Auburn Mountainview District Event] 	20 [Auburn District Event] 	--- 	--- 	0
+64 	56 	2980 - The Whidbey Island Wild Cats 	29 [Mount Vernon District Event] 	27 [Central Washington University District Event] 	--- 	--- 	0
+65 	56 	3219 - TREAD 	33 [Mount Vernon District Event] 	23 [Auburn District Event] 	Qualified 	--- 	0
+66 	55 	2374 - Crusader Bots 	20 [Oregon City District Event] 	35 [Wilsonville District Event] 	--- 	--- 	0
+67 	55 	2990 - Hotwire 	15 [Auburn Mountainview District Event] 	40 [Wilsonville District Event] 	--- 	--- 	0
+68 	54 	3693 - GearHead Pirates 	27 [Eastern Washington University District Event] 	27 [Central Washington University District Event] 	--- 	--- 	0
+69 	54 	4057 - KB Bots 	16 [Oregon City District Event] 	38 [Wilsonville District Event] 	Qualified 	--- 	0
+70 	54 	4030 - NullPointerException 	24 [Glacier Peak District Event] 	30 [Mount Vernon District Event] 	--- 	--- 	0
+71 	53 	4726 - Robo Dynasty 	8 [Auburn Mountainview District Event] 	40 [Eastern Washington University District Event] 	--- 	--- 	5
+72 	52 	4652 - WolfTech 	9 [Oregon City District Event] 	38 [Eastern Washington University District Event] 	--- 	--- 	5
+73 	52 	2930 - Glacier Peak Sonic Squirrels 	30 [Glacier Peak District Event] 	22 [Mount Vernon District Event] 	--- 	--- 	0
+74 	50 	1258 - SeaBot 	40 [Mount Vernon District Event] 	10 [Shorewood District Event] 	--- 	--- 	0
+75 	50 	3220 - Mechanics of Mayhem 	29 [Auburn Mountainview District Event] 	21 [Eastern Washington University District Event] 	--- 	--- 	0
+76 	50 	4089 - Stealth Robotics 	28 [Auburn Mountainview District Event] 	22 [Mount Vernon District Event] 	--- 	--- 	0
+77 	49 	2929 - JAGBOTS 	34 [Auburn Mountainview District Event] 	15 [Auburn District Event] 	--- 	--- 	0
+78 	49 	957 - SWARM 	24 [Wilsonville District Event] 	25 (IP) [Oregon State University District Event] 	--- 	--- 	0
+79 	49 	4681 - Murphy's law 	22 [Glacier Peak District Event] 	22 [Shorewood District Event] 	--- 	--- 	5
+80 	48 	2915 - Riverdale Robotics/Pandamonium 	12 [Oregon City District Event] 	36 (IP) [Oregon State University District Event] 	--- 	--- 	0
+81 	47 	2733 - Pigmice 	30 [Oregon City District Event] 	17 [Wilsonville District Event] 	--- 	--- 	0
+82 	47 	4654 - Mountaineers 	17 [Glacier Peak District Event] 	25 [Mount Vernon District Event] 	--- 	--- 	5
+83 	46 	847 - PHRED 	22 [Oregon City District Event] 	24 (IP) [Oregon State University District Event] 	--- 	--- 	0
+84 	46 	4469 - TJ 	8 [Auburn Mountainview District Event] 	33 [Auburn District Event] 	--- 	--- 	5
+85 	46 	2910 - Jack in the Bot 	13 [Glacier Peak District Event] 	33 [Central Washington University District Event] 	--- 	--- 	0
+86 	45 	4608 - Duct Tape Warriors 	32 [Eastern Washington University District Event] 	8 [Central Washington University District Event] 	--- 	--- 	5
+87 	45 	2093 - Bowtie Brigade 	6 [Oregon City District Event] 	39 [Wilsonville District Event] 	--- 	--- 	0
+88 	45 	4205 - ROBOCUBS 	23 [Glacier Peak District Event] 	22 [Mount Vernon District Event] 	--- 	--- 	0
+89 	45 	3786 - Chargers 	32 [Auburn Mountainview District Event] 	13 [Auburn District Event] 	--- 	--- 	0
+90 	44 	4772 - Optimistic Skyz 	29 [Auburn Mountainview District Event] 	10 [Auburn District Event] 	--- 	--- 	5
+91 	44 	1359 - Scalawags 	22 [Central Washington University District Event] 	22 (IP) [Oregon State University District Event] 	--- 	--- 	0
+92 	44 	2605 - Sehome Seamonsters 	23 [Mount Vernon District Event] 	21 [Central Washington University District Event] 	--- 	--- 	0
+93 	43 	4051 - Sabin-Sharks 	17 [Oregon City District Event] 	26 [Wilsonville District Event] 	--- 	--- 	0
+94 	43 	4579 - RoboEagles 	27 [Auburn Mountainview District Event] 	11 [Auburn District Event] 	--- 	--- 	5
+95 	43 	3024 - My Favorite Team 	20 [Oregon City District Event] 	23 (IP) [Oregon State University District Event] 	--- 	--- 	0
+96 	43 	5198 - RoboKnight Force 	27 [Oregon City District Event] 	6 (IP) [Oregon State University District Event] 	--- 	--- 	10
+97 	43 	2517 - Green Wrenches 	17 [Oregon City District Event] 	26 [Wilsonville District Event] 	--- 	--- 	0
+98 	42 	3636 - Generals 	14 [Oregon City District Event] 	28 [Wilsonville District Event] 	--- 	--- 	0
+99 	41 	2192 - YAK Attack 	31 [Auburn Mountainview District Event] 	10 (IP) [Oregon State University District Event] 	--- 	--- 	0
+100 	40 	4461 - RAMbotics 	23 [Shorewood District Event] 	12 [Auburn District Event] 	--- 	--- 	5
+101 	39 	1899 - Saints Robotics 	18 [Glacier Peak District Event] 	21 [Shorewood District Event] 	--- 	--- 	0
+102 	38 	2906 - Spanaway Lake Botworx 	16 [Auburn Mountainview District Event] 	22 [Auburn District Event] 	--- 	--- 	0
+103 	36 	1778 - Chill Out..! 	16 [Mount Vernon District Event] 	20 [Shorewood District Event] 	--- 	--- 	0
+104 	36 	2926 - Robo Sparks 	24 [Eastern Washington University District Event] 	12 [Central Washington University District Event] 	--- 	--- 	0
+105 	36 	4662 - Tribal Tech 	15 [Wilsonville District Event] 	16 (IP) [Oregon State University District Event] 	--- 	--- 	5
+106 	35 	2944 - Titanium Tigers 	29 [Eastern Washington University District Event] 	6 [Central Washington University District Event] 	--- 	--- 	0
+107 	34 	2148 - Mechaknights 	10 [Eastern Washington University District Event] 	24 [Central Washington University District Event] 	--- 	--- 	0
+108 	34 	3787 - Wild Robotocats 	23 [Glacier Peak District Event] 	11 [Shorewood District Event] 	--- 	--- 	0
+109 	34 	3223 - POKER Robotics 	14 [Glacier Peak District Event] 	20 [Central Washington University District Event] 	--- 	--- 	0
+110 	33 	4060 - S.W.A.G. 	15 [Auburn Mountainview District Event] 	18 [Mount Vernon District Event] 	--- 	--- 	0
+111 	33 	3586 - Pride in the Tribe-Caveman Rob... 	15 [Auburn Mountainview District Event] 	18 [Eastern Washington University District Event] 	--- 	--- 	0
+112 	33 	3218 - Panther Robotics 	13 [Auburn Mountainview District Event] 	20 [Auburn District Event] 	--- 	--- 	0
+113 	33 	5295 - Aldernating Current 	11 [Auburn Mountainview District Event] 	12 [Shorewood District Event] 	--- 	--- 	10
+114 	32 	3826 - SkyNet Robotics North West 	28 [Glacier Peak District Event] 	4 [Auburn District Event] 	--- 	--- 	0
+115 	32 	4512 - BEAR Bots 	6 [Glacier Peak District Event] 	21 [Mount Vernon District Event] 	--- 	--- 	5
+116 	31 	949 - Wolverine Robotics 	23 [Glacier Peak District Event] 	8 [Shorewood District Event] 	--- 	--- 	0
+117 	31 	2660 - Pengbots 	25 [Glacier Peak District Event] 	6 [Mount Vernon District Event] 	--- 	--- 	0
+118 	31 	3268 - Viking Robotics 	14 [Glacier Peak District Event] 	17 [Shorewood District Event] 	--- 	--- 	0
+119 	30 	1571 - Error404 	6 [Oregon City District Event] 	24 (IP) [Oregon State University District Event] 	--- 	--- 	0
+120 	30 	4173 - Bulldogs 	8 [Mount Vernon District Event] 	22 [Central Washington University District Event] 	--- 	--- 	0
+121 	30 	1510 - Wildcats 	19 [Mount Vernon District Event] 	11 [Wilsonville District Event] 	--- 	--- 	0
+122 	29 	3712 - RoboCats 	12 [Central Washington University District Event] 	17 (IP) [Oregon State University District Event] 	--- 	--- 	0
+123 	29 	4309 - 4-H Botsmiths 	6 [Glacier Peak District Event] 	23 [Mount Vernon District Event] 	--- 	--- 	0
+124 	29 	4110 - DEEP SPACE NINERS 	8 [Wilsonville District Event] 	21 (IP) [Oregon State University District Event] 	--- 	--- 	0
+125 	28 	3221 - KM Royals 	20 [Auburn Mountainview District Event] 	8 [Auburn District Event] 	--- 	--- 	0
+126 	28 	3673 - C.Y.B.O.R.G. Seagulls 	22 [Oregon City District Event] 	6 (IP) [Oregon State University District Event] 	--- 	--- 	0
+127 	28 	3684 - Electric Eagles 	24 [Glacier Peak District Event] 	4 [Auburn District Event] 	--- 	--- 	0
+128 	27 	3575 - Okanogan FFA 	19 [Eastern Washington University District Event] 	8 [Central Washington University District Event] 	--- 	--- 	0
+129 	27 	3576 - Clover Park High School Warrio... 	8 [Auburn Mountainview District Event] 	19 [Auburn District Event] 	--- 	--- 	0
+130 	27 	4682 - Brave Bots 	13 [Glacier Peak District Event] 	9 [Shorewood District Event] 	--- 	--- 	5
+131 	26 	4180 - Iron Riders 	8 [Shorewood District Event] 	18 [Auburn District Event] 	--- 	--- 	0
+132 	26 	3781 - 4-HPenneyBots 	12 [Auburn Mountainview District Event] 	14 [Shorewood District Event] 	--- 	--- 	0
+133 	26 	4132 - Scotbots 	14 [Oregon City District Event] 	12 [Wilsonville District Event] 	--- 	--- 	0
+134 	26 	4304 - Iron Rams 	13 [Auburn Mountainview District Event] 	13 [Auburn District Event] 	--- 	--- 	0
+135 	23 	3192 - Tiger Bytes 	6 [Wilsonville District Event] 	17 (IP) [Oregon State University District Event] 	--- 	--- 	0
+136 	23 	4495 - Tigers 	6 [Eastern Washington University District Event] 	12 [Central Washington University District Event] 	--- 	--- 	5
+137 	20 	4104 - Blackhawks 	12 [Eastern Washington University District Event] 	8 [Central Washington University District Event] 	--- 	--- 	0
+138 	20 	2542 - Go4bots 	12 [Oregon City District Event] 	8 [Wilsonville District Event] 	--- 	--- 	0
+139 	20 	3049 - Fluffy Robotics 	10 [Shorewood District Event] 	10 [Auburn District Event] 	--- 	--- 	0
+140 	20 	4043 - NerdHerd 	14 [Wilsonville District Event] 	6 (IP) [Oregon State University District Event] 	--- 	--- 	0
+141 	18 	2942 - Panda Machine 	10 [Shorewood District Event] 	8 [Auburn District Event] 	--- 	--- 	0
+142 	18 	3831 - Da Bears 	10 [Eastern Washington University District Event] 	8 [Central Washington University District Event] 	--- 	--- 	0
+143 	18 	3876 - Mabton LugNutz 	10 [Eastern Washington University District Event] 	8 [Central Washington University District Event] 	--- 	--- 	0
+144 	18 	4082 - Ranching Robots 	10 [Eastern Washington University District Event] 	8 [Central Washington University District Event] 	--- 	--- 	0
+145 	17 	4683 - Full-metal Robotics 	6 [Glacier Peak District Event] 	6 [Mount Vernon District Event] 	--- 	--- 	5
+146 	16 	1432 - Mahr's Metal Beavers 	6 [Wilsonville District Event] 	10 (IP) [Oregon State University District Event] 	--- 	--- 	0
+147 	16 	2922 - RoboCon 	8 [Mount Vernon District Event] 	8 [Auburn District Event] 	--- 	--- 	0
+148 	15 	4692 - Metal Mallards 	4 [Oregon City District Event] 	6 [Wilsonville District Event] 	--- 	--- 	5
+149 	13 	753 - High Desert Droids 	5 [Oregon City District Event] 	8 [Central Washington University District Event] 	--- 	--- 	0
+150 	12 	2555 - RoboRams 	2 [Auburn Mountainview District Event] 	10 [Auburn District Event] 	--- 	--- 	0
+151 	10 	3681 - Raiders FRC 	2 [Glacier Peak District Event] 	8 [Shorewood District Event] 	--- 	--- 	0
+152 	6 	4105 - ChiefBotsFTS 	6 [Eastern Washington University District Event] 	Not Played 	--- 	--- 	0
+153 	0 	3286 - the rocket surgeons 	0 [Central Washington University District Event] 	Not Played 	--- 	--- 	0

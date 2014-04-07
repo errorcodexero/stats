@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "set.h"
+
 template<typename K,typename V>
 std::vector<V> values(std::map<K,V> const& m){
 	std::vector<V> r;

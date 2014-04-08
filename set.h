@@ -91,7 +91,7 @@ std::vector<T> to_vector(std::set<T> s){
 	return r;
 }
 
-template<typename T>
+/*template<typename T>
 bool operator&(std::set<T> const& s,T t){
 	return s.count(t);
 }
@@ -99,6 +99,17 @@ bool operator&(std::set<T> const& s,T t){
 template<typename T>
 bool operator&(T t,std::set<T> const& s){
 	return s.count(t);
+}*/
+
+template<typename T>
+Maybe<T> operator&(std::set<T> s,T t){
+	if(contains(s,t)){
+		return t;
+	}
+	return Maybe<T>();
 }
+
+template<typename T>
+Maybe<T> operator&(T t,std::set<T> s){ return s&t; }
 
 #endif

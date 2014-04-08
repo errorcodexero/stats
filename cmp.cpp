@@ -221,8 +221,6 @@ vector<Team_info> whole_events_only(vector<Team_info> v){
 	
 }*/
 
-vector<unsigned> range(unsigned lim){nyi}
-
 static const unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 static auto rng=std::default_random_engine(seed);
 

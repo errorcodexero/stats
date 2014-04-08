@@ -125,14 +125,6 @@ auto map_map(Func f,std::map<K,V> m)->std::map<K,decltype(f(begin(m)->second))>{
 }
 
 template<typename T>
-Maybe<T> operator&(std::set<T> s,T t){
-	if(contains(s,t)){
-		return t;
-	}
-	return Maybe<T>();
-}
-
-template<typename T>
 std::vector<T> take(unsigned lim,std::vector<T> const& in){
 	std::vector<T> r;
 	for(unsigned i=0;i<lim;i++){

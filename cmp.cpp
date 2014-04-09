@@ -27,11 +27,15 @@ struct Team_info{
 	Team number;
 	string nickname;
 	Maybe<Event_appearance> event1,event2;
+
+	enum class District_cmp_status{QUALIFIED,DECLINED,NOT_QUALIFIED};
+
+	District_cmp_status district_cmp_status;
 	Maybe<int> district_cmp_pts;
 	int rookie_bonus;
 
-	Team_info(int a,int b,Team c,string d,Maybe<Event_appearance> e,Maybe<Event_appearance> f,Maybe<int> g,int h):
-		rank(a),total_pts(b),number(c),nickname(d),event1(e),event2(f),district_cmp_pts(g),rookie_bonus(h)
+	Team_info(int a,int b,Team c,string d,Maybe<Event_appearance> e,Maybe<Event_appearance> f,District_cmp_status g,Maybe<int> h,int i):
+		rank(a),total_pts(b),number(c),nickname(d),event1(e),event2(f),district_cmp_status(g),district_cmp_pts(h),rookie_bonus(i)
 	{
 		assert(valid());
 	}
@@ -42,6 +46,23 @@ struct Team_info{
 	}
 };
 
+Maybe<Team_info::District_cmp_status> parse_district_cmp_status(string s){
+	s=strip(s);
+	if(s=="DI") return Team_info::District_cmp_status::DECLINED;
+	if(s=="Qualified") return Team_info::District_cmp_status::QUALIFIED;
+	if(s=="---") return Team_info::District_cmp_status::NOT_QUALIFIED;
+	return Maybe<Team_info::District_cmp_status>();
+}
+
+ostream& operator<<(ostream& o,Team_info::District_cmp_status a){
+	#define X(name) if(a==Team_info::District_cmp_status::name) return o<<""#name;
+	X(QUALIFIED)
+	X(DECLINED)
+	X(NOT_QUALIFIED)
+	#undef X
+	assert(0);
+}
+
 ostream& operator<<(ostream& o,Team_info a){
 	o<<"Team_info( ";
 	#define X(name) o<<""#name":"<<a.name<<" ";
@@ -51,6 +72,7 @@ ostream& operator<<(ostream& o,Team_info a){
 	X(nickname)
 	X(event1)
 	X(event2)
+	X(district_cmp_status)
 	X(district_cmp_pts)
 	X(rookie_bonus)
 	#undef X
@@ -64,6 +86,12 @@ Maybe<Event_appearance> appearance(string s){
 	return Event_appearance{atoi(v.at(0)),v.at(1).substr(0,v.at(1).size()-2)};
 }
 
+int parse_int(string s){
+	int r=atoi(s.c_str());
+	assert(as_string(r)==s);
+	return r;
+}
+
 static Maybe<Team_info> parse_line(string s){
 	if(s.size()==0) return Maybe<Team_info>();
 	auto v=split(s,'\t');
@@ -72,14 +100,22 @@ static Maybe<Team_info> parse_line(string s){
 	Team team(team_sp[0]);
 	auto nickname=strip(join(tail(team_sp),'-'));
 	Maybe<Event_appearance> event1=appearance(v.at(3)),event2=appearance(v.at(4));
-	Maybe<int> dcmp=0;
-	int rookie_bonus=atoi(v.at(6));
-	return Team_info{atoi(v.at(0)),atoi(v.at(1)),team,nickname,event1,event2,dcmp,rookie_bonus};
+	int rookie_bonus=parse_int(v.at(7));
+	return Team_info{
+		atoi(v.at(0)),//rank
+		atoi(v.at(1)),//total pts
+		team,//number
+		nickname,event1,event2,
+		*parse_district_cmp_status(v.at(5)),//district cmp status
+		atoi(v.at(6)),//district cmp points
+		rookie_bonus
+	};
 }
 
 vector<Team_info> read_data(){
 	vector<Team_info> r;
-	for(auto a:lines(slurp("dcmp_data.txt"))){
+	//for(auto a:lines(slurp("dcmp_data.txt"))){
+	for(auto a:lines(slurp("page_apr8.txt"))){
 		auto p=parse_line(a);
 		if(p) r|=*p;
 	}
@@ -235,6 +271,25 @@ vector<Team> choose_for_match(vector<Team> teams){
 	return take(6,teams);
 }
 
+template<typename T>
+vector<vector<T>> triples(vector<T> in){
+	assert(in.size()%3==0);
+	vector<vector<T>> r;
+	for(unsigned i=0;i<in.size();i+=3){
+		vector<T> v;
+		for(unsigned j=0;j<3;j++){
+			v|=in[i+j];
+		}
+		r|=v;
+	}
+	return r;
+}
+
+template<typename T>
+T choose_random(vector<T> v){
+	return v[rand()%v.size()];
+}
+
 map<Team,unsigned> dcmp_dist_random(vector<Team> teams){
 	static const unsigned TEAMS=64;
 	assert(TEAMS==teams.size());
@@ -264,16 +319,33 @@ map<Team,unsigned> dcmp_dist_random(vector<Team> teams){
 	//should make the elim teams be the top16 in pts after prelims & the rest random.
 	auto elim_teams=take(24,shuffle(teams));
 	cout<<elim_teams<<endl;
-	/*for(auto a:enumerate(take(24,shuffle(teams)))){
-	//elimination matches
-		int value=10;
-		if(a.first<12){
-			value=20;
+	auto alliances=triples(elim_teams);
+	//alliance selection points
+	for(unsigned i=0;i<8;i++){
+		for(unsigned j=0;j<2;j++){
+			add(alliances[i][j],16-i);
 		}
-		if(a.first<
-	}*/
-	
-	nyi
+		add(alliances[i][2],1+i);
+	}
+
+	//elimination matches
+	//quarter finals
+	vector<vector<Team>> semi_finalists;
+	for(unsigned i=0;i<8;i+=2){
+		semi_finalists|=alliances[i+(rand()%2)];
+	}
+	for(Team team:flatten(semi_finalists)) add(team,10);
+
+	vector<vector<Team>> finalists;
+	for(unsigned i=0;i<4;i++){
+		finalists|=semi_finalists[i+(rand()%2)];
+	}
+	for(auto team:flatten(finalists)) add(team,10);
+
+	//winners
+	for(auto team:choose_random(finalists)) add(team,10);
+
+	return pts;
 }
 
 //the top 64; for now we'll just do the number of points accumulated.
@@ -290,6 +362,7 @@ vector<Team> top_teams(vector<Team_info> v){
 int main(){
 	cout<<"hello\n";
 	auto d=read_data();
+	for(auto a:d) cout<<a<<endl;
 	d=whole_events_only(d);
 	cout<<count(events(d))<<endl;
 	print_map(points_by_event(d));
@@ -307,6 +380,14 @@ int main(){
 		cout<<t<<"\t"<<seen_range(d,t)<<endl;
 	}*/
 	cout<<dcmp_dist_random(top_teams(d))<<endl;
+
+	auto team_number=[](Team_info t){ return t.number; };
+	auto s=segregate([](Team_info t){ return t.district_cmp_status; },d);
+	auto m=map_map([=](vector<Team_info> p){ return mapf(team_number,p); },s);
+	cout<<m<<endl;
+	for(auto p:m){
+		cout<<p.first<<" "<<p.second.size()<<endl<<"\t"<<sorted(p.second)<<endl;
+	}
 	return 0;
 }
 #endif

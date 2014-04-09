@@ -1,4 +1,4 @@
-g++-4.8 -std=c++0x -DCMP \
+g++ -std=c++0x -DCMP \
 	cmp.cpp \
 	util.cpp \
 	exception.cpp \

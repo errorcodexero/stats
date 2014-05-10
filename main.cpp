@@ -17,7 +17,7 @@
 
 using namespace std;
 
-//The blue alliance's 2007 Pittsburgh data is totally bogus - it has team numbers in one of the socre columns for half of the event.
+//The blue alliance's 2007 Pittsburgh data is totally bogus - it has team numbers in one of the score columns for half of the event.
 /*
 List of integrity checks that should probably run on match data:
 -All scores are >=0

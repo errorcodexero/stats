@@ -20,6 +20,12 @@ std::ostream& operator<<(std::ostream& o,Competition_level);
 
 typedef std::string Event_key;
 
+struct Video{
+	std::string type,key;
+};
+
+std::ostream& operator<<(std::ostream&,Video);
+
 struct Match_info{
 	int match_number;
 	int set_number;
@@ -32,6 +38,7 @@ struct Match_info{
 	};
 	std::map<std::string,Alliance> alliances;
 	Event_key event;
+	std::vector<Video> video;
 };
 
 std::ostream& operator<<(std::ostream&,Match_info::Alliance const&);

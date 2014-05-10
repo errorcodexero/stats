@@ -52,7 +52,6 @@ void histogram(ostream& o,vector<int> v){
 
 enum class Listing_type{TEAM,EVENT,MATCH};
 
-//this might change to a map to a vector of string at some point.
 map<string,vector<string>> get_flags(vector<string> args){
 	auto flag=mapf(
 		[](string s)->Maybe<string>{
@@ -83,25 +82,16 @@ map<string,vector<string>> get_flags(vector<string> args){
 	return r;
 }
 
-/*template<class Tuple,int V>
-struct Tuple_cmpd<tuple,V> m){
-	static bool cmp(Tuple a,Tuple b{
-		,N-1>::cmp(a,b);
-	}
-};
-
-template<class Tuple>
-struct Tuple_cmp<Tuple,0>{
-	static bool cmp(Tuple a,Tuple b){
-		return get<0>(a)) < (get<0>(b));
-	}
-};*/
-
 template<typename Tuple,int COL>
 vector<Tuple> sort_tuples(vector<Tuple> v){
-	//eh...this might get pretty annoying to implement pretty fast.
-//	sort(begin(v),end(v),Tuple_cmp<Tuple,COL>::cmp);
-	sort(begin(v),end(v));
+	sort(
+		begin(v),end(v),
+		[](Tuple a,Tuple b)->bool{
+			if(get<COL>(a)<get<COL>(b)) return 1;
+			if(get<COL>(b)<get<COL>(a)) return 0;
+			return a<b;
+		}
+	);
 	return v;
 }
 

@@ -515,8 +515,29 @@ Match_info match_info(string const& match_key){
 			//cout<<"a1\n";
 			r.event=s();
 			//cout<<"a2\n";
+		}else if(n=="videos"){
+			for(auto a:v.get_array()){
+				Video v;
+				for(auto b:a.get_obj()){
+					auto n2=b.name_;
+					auto v2=b.value_.get_str();
+					if(n2=="type"){
+						v.type=v2;
+					}else if(n2=="key"){
+						v.key=v2;
+					}else{
+						nyi
+					}
+				}
+				r.video|=v;
+			}
+		}else if(n=="time_string"){
+			//do nothing - seems to be a formatted time
+		}else if(n=="time"){
+			//do nothing - seems to be a string that's a Unix time.
 		}else{
 			cout<<"got "<<n<<"\n";
+			cout<<"value="<<v<<endl;
 			nyi
 		}
 		//cout<<"d1\n";

@@ -1,7 +1,7 @@
 SHELL=/bin/bash
 CFLAGS=-O3 --std=c++0x -Wall
 DEPS=*.h
-CFILES=$(shell ls *.cpp)
+CFILES=$(shell ls *.cpp | grep -v cmp.cpp)
 OBJ=$(CFILES:cpp=o)
 
 %.o: %.cpp $(DEPS)

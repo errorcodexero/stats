@@ -127,7 +127,7 @@ auto map_map(Func f,std::map<K,V> m)->std::map<K,decltype(f(begin(m)->second))>{
 template<typename T>
 std::vector<T> take(unsigned lim,std::vector<T> const& in){
 	std::vector<T> r;
-	for(unsigned i=0;i<lim;i++){
+	for(unsigned i=0;i<lim && i<in.size();i++){
 		r|=in[i];
 	}
 	return r;
@@ -263,5 +263,23 @@ auto enumerate(Collection const& v)->std::vector<std::pair<unsigned,ELEMENT(v)>>
 }
 
 int atoi(std::string const&);
+
+template<typename T>
+std::map<unsigned,std::vector<T>> count2(std::vector<T> v){
+	std::map<unsigned,std::vector<T>> r;
+	for(auto p:count(v)){
+		r[p.second]|=p.first;
+	}
+	return r;
+}
+
+template<typename Collection>
+void print_table(Collection const& c){
+	for(auto const& a:c){
+		print(std::cout,"\t",a);
+		std::cout<<"\n";
+		//cout<<a<<"\n";
+	}
+}
 
 #endif

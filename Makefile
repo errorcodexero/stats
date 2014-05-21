@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-CFLAGS=-O3 --std=c++0x -Wall
+CFLAGS=-O3 --std=c++0x -Wall -Werror
 DEPS=*.h
 CFILES=$(shell ls *.cpp | grep -v cmp.cpp)
 OBJ=$(CFILES:cpp=o)

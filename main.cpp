@@ -14,6 +14,7 @@
 #include "projected_strength.h"
 #include "calculate.h"
 #include "points.h"
+#include "scrape_team.h"
 
 using namespace std;
 
@@ -40,12 +41,17 @@ vector<unsigned> range(unsigned lim){
 	return r;
 }
 
+template<typename Func>
+void repeat(unsigned i,Func f){
+	while(i--) f();
+}
+
 void histogram(ostream& o,vector<int> v){
 	//static const unsigned WIDTH=80;
 	auto mina=min(v),maxa=max(v);
 	auto d=mapf([=](int x){ return rerange(mina,maxa,0,80,x); },v);
 	for(auto i:d){
-		for(auto _:range(i)) o<<"=";
+		repeat(i,[&](){ o<<"="; });
 		o<<"\n";
 	}
 }
@@ -80,28 +86,6 @@ map<string,vector<string>> get_flags(vector<string> args){
 		}
 	}
 	return r;
-}
-
-template<typename Tuple,int COL>
-vector<Tuple> sort_tuples(vector<Tuple> v){
-	sort(
-		begin(v),end(v),
-		[](Tuple a,Tuple b)->bool{
-			if(get<COL>(a)<get<COL>(b)) return 1;
-			if(get<COL>(b)<get<COL>(a)) return 0;
-			return a<b;
-		}
-	);
-	return v;
-}
-
-template<typename Collection>
-void print_table(Collection const& c){
-	for(auto const& a:c){
-		print(cout,"\t",a);
-		cout<<"\n";
-		//cout<<a<<"\n";
-	}
 }
 
 template<typename Collection>
@@ -194,15 +178,6 @@ set<pair<T,T>> pairs(set<T> s){
 				r|=make_pair(a,b);
 			}
 		}
-	}
-	return r;
-}
-
-template<typename T>
-map<unsigned,vector<T>> count2(vector<T> v){
-	map<unsigned,vector<T>> r;
-	for(auto p:count(v)){
-		r[p.second]|=p.first;
 	}
 	return r;
 }
@@ -594,6 +569,11 @@ int run_main(map<string,vector<string>> const& flags){
 		if(!f) return vector<string>{default_value};
 		return *f;
 	};
+
+	if(flags.find("states")!=end(flags)){
+		scrape_team_demo();
+		return 0;
+	}
 
 	if(flags.find("project")!=flags.end()){
 		return project(flags);

@@ -56,7 +56,10 @@ Alliance parse_line(string s){
 	auto sp=split(s,',');
 	assert(sp.size()==5);
 	//cout<<sp<<"\n";
-	return Alliance{{Team(sp[1]),Team(sp[2]),Team(sp[3])},parse_alliance_result(sp[4])};
+	return Alliance{
+		{{Team(sp[1]),Team(sp[2]),Team(sp[3])}},
+		parse_alliance_result(sp[4])
+	};
 }
 
 Event_picks parse_event(string s){
@@ -71,7 +74,7 @@ Event_picks parse_event(string s){
 	assert(a.size()==8);
 
 	//there's got to be a better way to write this line.
-	return Event_picks{a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7]};
+	return Event_picks{{a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7]}};
 }
 
 bool suffix(string haystack,string needle){
@@ -129,7 +132,8 @@ int pick_main(){
 		aa[i][3]=m[i][Alliance_result::QF]+aa[i][2];
 	}
 	for(auto a:aa){
-		nyi//cout<<a<<"\n";
+		nyi
+		cout<<a<<"\n";
 	}
 
 	cout<<"winning \% at each round, for each seed\n";
@@ -140,7 +144,8 @@ int pick_main(){
 		}
 	}
 	for(auto a:seed_pcnt){
-		nyi//cout<<a<<"\n";
+		nyi
+		cout<<a<<"\n";
 	}
 
 	//a more complicated thing to try would be to figure out what the winning % between each seed is.  

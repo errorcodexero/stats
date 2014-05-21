@@ -33,4 +33,17 @@ std::ostream& operator<<(std::ostream& o,const std::tuple<Args...>& t){
 	return o<<")";
 }
 
+template<typename Tuple,int COL>
+std::vector<Tuple> sort_tuples(std::vector<Tuple> v){
+	sort(
+		begin(v),end(v),
+		[](Tuple a,Tuple b)->bool{
+			if(std::get<COL>(a)<std::get<COL>(b)) return 1;
+			if(std::get<COL>(b)<std::get<COL>(a)) return 0;
+			return a<b;
+		}
+	);
+	return v;
+}
+
 #endif

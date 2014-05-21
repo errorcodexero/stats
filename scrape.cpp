@@ -1215,7 +1215,7 @@ vector<pair<Event_key,string>> awards(Team team,int year){
 vector<int> all_years(){
 	vector<int> r;
 	//todo: change this back to 1992.
-	for(int i=1992;i<=2013;i++){
+	for(int i=1992;i<=2014;i++){
 		r|=i;
 	}
 	return r;
@@ -1281,8 +1281,8 @@ void award_appearances(){
 	for(auto award:to_set(all_awards())){
 		cout<<"Award: \""<<award<<"\"\n";
 		for(auto year:all_years()){
-//			cout<<year<<":";
-//			cout<<count(awards(year))[award]<<"\n";
+			cout<<year<<":";
+			cout<<count(awards(year))[award]<<"\n";
 		}
 	}
 }

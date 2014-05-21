@@ -5,6 +5,7 @@
 #include "bevent.h"
 #include "team.h"
 
+std::string scrape_cached(std::string const&);
 std::vector<std::string> get_event_keys(int);
 std::vector<Match_info> matches(int);
 std::vector<BEvent> get_events(int year);
@@ -28,5 +29,8 @@ std::ostream& operator<<(std::ostream&,BEvent_details const&);
 
 BEvent_details get_details(std::string const& event_code);
 void awards();
+std::vector<int> all_years();
+std::vector<Match_info> all_matches();
+std::set<Team> all_teams();
 
 #endif

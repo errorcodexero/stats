@@ -29,7 +29,7 @@ double get24thbest(vector<double> v){
 	return v[23];
 }
 
-int project(map<string,vector<string>> flags){
+int project(map<string,vector<string>> /*flags*/){
 	//cout<<get_event_keys(2014)<<"\n";
 	auto events=get_events(2014);
 	auto nw_events=filter(nw_event,events);

@@ -32,5 +32,5 @@ const char *T::what()const throw(){
 	return msg.c_str();
 }
 
-ostream& operator<<(ostream& o,T const& t)nyi
+ostream& operator<<(ostream&,T const&)nyi
 #undef T

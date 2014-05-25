@@ -147,7 +147,7 @@ struct Simple_match{
 	}
 };
 
-ostream& operator<<(ostream& o,Simple_match m){
+ostream& operator<<(ostream&,Simple_match){
 	nyi//return o<<"Simple_match("<<m.score<<" "<<m.teams<<")";
 }
 
@@ -561,9 +561,30 @@ set<Team> winners(Match_info m){
 	return teams(w[0]);
 }
 
-int awards(map<string,vector<string>> const& flags){
+int awards(map<string,vector<string>> const& /*flags*/){
 	awards();
 	return 0;
+}
+
+double calc_average_score(int year){
+	return *mean(scores(matches(year)));
+}
+
+double average_score(int year){
+	static map<int,double> cache;
+	auto f=cache.find(year);
+	if(f==end(cache)){
+		return cache[year]=calc_average_score(year);
+	}
+	return f->second;
+}
+
+Year year(Event_key const& e){
+	return atoi(e);
+}
+
+Year year(Match_info const& m){
+	return year(m.event);
 }
 
 int run_main(map<string,vector<string>> const& flags){
@@ -614,7 +635,7 @@ int run_main(map<string,vector<string>> const& flags){
 		) //this is experimental.
 	};
 
-	typedef std::function<bool(Match_info)> Filter_func;
+	typedef std::function<bool(Match_info const&)> Filter_func;
 	typedef std::function<Filter_func(string)> Filter_option;
 	typedef tuple<string,string,Filter_option> Filter_option_elem;
 	vector<Filter_option_elem> filter_options{
@@ -623,7 +644,7 @@ int run_main(map<string,vector<string>> const& flags){
 			"Exclude matches that do not include the given team.  May be used multiple times.",
 			[](string s){
 				Team team{s};
-				return [team](Match_info m)->bool{
+				return [team](Match_info const& m)->bool{
 					return teams(m)&team;
 				};
 			}
@@ -645,19 +666,19 @@ int run_main(map<string,vector<string>> const& flags){
 					exit(1);
 				}
 				auto level=*p;
-				return [level](Match_info m){ return m.competition_level==level; };
+				return [level](Match_info const& m){ return m.competition_level==level; };
 			}
 		),
 		Filter_option_elem(
 			"event",
 			"Exclude events whose \"event key\" does not match the given argument.",
 			[](string s){
-				return [s](Match_info m){ return m.event==s; };
+				return [s](Match_info const& m){ return m.event==s; };
 			}
 		)
 	};
 	vector<Filter_func> filters;
-	for(auto p:filter_options){
+	for(auto const& p:filter_options){
 		auto b=get_flag(get<0>(p));
 		if(b){
 			for(auto elem:*b){
@@ -666,7 +687,6 @@ int run_main(map<string,vector<string>> const& flags){
 		}
 	}
 
-	
 	typedef tuple<string,string,std::function<void(vector<Match_info> const&)>> Display_option;
 
 	vector<Display_option> display_options={
@@ -689,6 +709,19 @@ int run_main(map<string,vector<string>> const& flags){
 				cout<<"quartiles:"<<quartiles(scores(m))<<"\n";
 				cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
 				cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
+			}
+		),
+		Display_option(
+			"gap",
+			"The ratio of the average win score to the averages loss score",
+			[](vector<Match_info> const& m){
+				auto w=mean_score(winning_alliances(m));
+				auto l=mean_score(losing_alliances(m));
+				if(w&&l){
+					cout<<(*w / *l)<<endl;
+				}else{
+					cout<<w;
+				}
 			}
 		),
 		Display_option(
@@ -791,7 +824,8 @@ int run_main(map<string,vector<string>> const& flags){
 			SHOW_OPTION(a);//cout<<"\t--"<<get<0>(a)<<"\t"<<get<1>(a)<<endl;
 		}
 		cout<<"Main mode options:"<<endl;
-		cout<<"\t--year"<<"\tInclude the specified year.  Defaults to 2013.  May be used multiple times."<<endl;
+		show_option("year","Include the specified year.  Defaults to 2013.  May be used multiple times.");
+		show_option("normalize","Multiply all match scores by a factor the make the average match score for every year 100.");
 		cout<<"Filters:"<<endl;
 		for(auto a:filter_options){
 			SHOW_OPTION(a);//cout<<"\t--"<<get<0>(a)<<"\t"<<get<1>(a)<<endl;
@@ -814,6 +848,26 @@ int run_main(map<string,vector<string>> const& flags){
 	for(auto year_str:y){
 		int year=atoi(year_str.c_str());
 		m|=matches(year);
+	}
+
+	if(get_flag("normalize")){
+		//normalize by the average score of the year that it's for
+		//int year=2010;//todo: make this be whatever year the match is from
+		/*auto m1=matches(year);
+		cout<<"m1:"<<m1.size()<<endl;
+		auto s1=scores(m1);
+		cout<<"s1:"<<s1<<endl;
+		double mn1=mean(s1);
+		cout<<"mn1:"<<mn1<<endl;*/
+		//auto mean1=*mean(scores(matches(year)));
+		//cout<<"mean1="<<mean1<<endl;
+		for(auto& match:m){
+			//this is not going to work very well to start with since the scores are stored as integers...maybe should make it out of 100% instead
+			auto m2=average_score(year(match));
+			for(auto &a:match.alliances){
+				a.second.score/=(m2/100);
+			}
+		}
 	}
 
 	m=filter(

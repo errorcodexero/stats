@@ -553,7 +553,7 @@ Match_info match_info(string const& match_key){
 //opr: columns=teams,rows=present on this alliance?, vector=allaince score
 //ccwm: columns=teams,rows=(red?1:(blue?-1:0)), vector=red score-blue score
 
-vector<Match> matches_with_team(Team team,int year){
+vector<Match> matches_with_team(Team,int/* year*/){
 	vector<string> r;
 	nyi
 	return r;
@@ -796,7 +796,7 @@ ostream& operator<<(ostream& o,BTeam_details const& b){
 	return o<<")";
 }
 
-BTeam_details team_details(Team team)nyi
+//BTeam_details team_details(Team team)nyi
 
 template<typename T>
 struct Tag{

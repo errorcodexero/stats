@@ -587,6 +587,195 @@ Year year(Match_info const& m){
 	return year(m.event);
 }
 
+typedef tuple<string,string,std::function<void(vector<Match_info> const&)>> Display_option;
+
+static const vector<Display_option> DISPLAY_OPTIONS={
+	Display_option(
+		"matches",
+		"Matches listed individually",
+		[](vector<Match_info> const& m){
+			for(auto a:m){
+				cout<<a<<"\n";
+			}
+		}
+	),
+	Display_option(
+		"averages",
+		"Show summary statistics",
+		[](vector<Match_info> const& m){
+			cout<<"mean="<<mean(scores(m))<<"\n";
+			cout<<"median="<<median(scores(m))<<"\n";
+			cout<<"mode="<<mode(scores(m))<<"\n";
+			cout<<"quartiles:"<<quartiles(scores(m))<<"\n";
+			cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
+			cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
+		}
+	),
+	Display_option(
+		"gap",
+		"The ratio of the average win score to the averages loss score",
+		[](vector<Match_info> const& m){
+			auto w=mean_score(winning_alliances(m));
+			auto l=mean_score(losing_alliances(m));
+			if(w&&l){
+				cout<<(*w / *l)<<endl;
+			}else{
+				cout<<w;
+			}
+		}
+	),
+	Display_option(
+		"elim_gap",
+		"The ratio of average elimination match score to the average qual score",
+		[](vector<Match_info> const& m){
+			map<bool,vector<Match_info>> s=segregate([](Match_info m){ return m.competition_level==Competition_level::QUALS; },m);
+			if(s.find(0)!=s.end() && s.find(1)!=s.end()){
+				auto elim=*mean(scores(s[0]));
+				auto qual=*mean(scores(s[1]));
+				cout<<elim/qual<<endl;
+			}else{
+				cout<<"NULL"<<endl;
+			}
+		}
+	),
+	Display_option(
+		"records",
+		"Win-loss-tie records by team",
+		[](vector<Match_info> const& m){
+			auto c=calculate_records(m);
+			auto rec=mapf([](pair<Team,Record> p){ return make_tuple(p.first,p.second,win_portion(p.second)); },c);
+			rec=sort_tuples<tuple<Team,Record,double>,2>(rec);
+			for(auto a:rec){
+				TuplePrinter<tuple<Team,Record,double>,3>::print(cout,"\t",a);
+				cout<<"\n";
+			}
+		}
+	),
+	Display_option(
+		"head_to_head",
+		"Results between pairs of teams",
+		[](vector<Match_info> const& m){
+			//typedef tuple<Team,Team,unsigned,unsigned,unsigned,unsigned> TT;
+			print_table(reversed(sort_tuples<Flat_head_to_head,2>(flat_head_to_head(m))));
+		}
+	),
+	Display_option(
+		"html_head_to_head",
+		"Same as --head_to_head but in HTML form.  Crashes browsers due to size.",
+		//"Warning: This will create a file whole size is measured in megabytes."
+		//"The problem with that is that you may crash Firefox or Konqueror, lynx appears to hang, etc.  elinks seems to be fine though.  "
+		//"You probably just want this output as text.",
+		[](vector<Match_info> const& m){
+			print_html_table(reversed(sort_tuples<Flat_head_to_head,2>(flat_head_to_head(m))));
+		}
+	),
+	Display_option("teams","List team numbers",[](vector<Match_info> const& m){ cout<<teams(m)<<"\n"; }),
+	Display_option("team_count","Number of teams",[](vector<Match_info> const& m){ cout<<"Teams: "<<teams(m).size()<<"\n"; }),
+	Display_option(
+		"events",
+		"Event names",
+		[](vector<Match_info> const& m){
+			//cout<<events(m)<<"\n";
+			for(auto a:events(m)){
+				cout<<a<<endl;
+			}
+		}
+	),
+	Display_option("event_count","Number of events",[](vector<Match_info> const& m){ cout<<"Events: "<<events(m).size()<<"\n"; }),
+	Display_option("competition_levels","Levels of competition included",[](vector<Match_info> const& m){ cout<<competition_level(m)<<"\n"; }),
+	Display_option("finals","How often different teams make the eliminations",[](vector<Match_info> const& m){
+		auto f=finals_appearances(m);
+		typedef tuple<Team,unsigned,unsigned,unsigned> Tup;
+		vector<Tup> v;
+		for(auto p:f){
+			auto team=p.first;
+			auto events=p.second.first;
+			auto elims=p.second.second;
+			v|=Tup(team,events,elims,events-elims);
+		}
+		v=sort_tuples<Tup,3>(v);
+		//v=filter([](Tup t){ return get<2>(t)==0; },v);
+		print_table(v);
+		//for(auto a:v) cout<<a<<"\n";
+	}),
+	Display_option("rank","Qualification win percentages for winning alliances",[](vector<Match_info> const& m){
+		//try to figure out which alliance has won an event with the worst record for its members before the elimination rounds.
+		typedef tuple<Event_key,set<Team>,double> Tup;
+		vector<Tup> v;
+		vector<Event_key> no_finals;
+		for(auto event_p:segregate([](Match_info mi){ return mi.event; },m)){
+			auto event_key=event_p.first;
+			auto matches=event_p.second;
+			auto finals_matches=finals(matches);
+			if(finals_matches.size()==0){
+				no_finals|=event_key;
+				continue;
+			}
+			auto winning_teams=winners(last(finals_matches));
+			auto qual_matches=quals(matches);
+			auto recs=calculate_records(qual_matches);
+			//need to figure out the winning alliance
+			//then, for each of its members, find their qualification record
+			//add them all up and put into the vector.
+			//to start with, going to start by just figuring out the record of everyone in the finals.
+			//auto winning_teams=teams(finals_matches);
+			Record winning_alliance_record;
+			for(auto team:winning_teams){
+				winning_alliance_record+=recs[team];
+			}
+			//cout<<event_p.first<<" "<<winning_alliance_record<<" "<<win_portion(winning_alliance_record)<<"\n";
+			v|=make_tuple(event_p.first,winning_teams,win_portion(winning_alliance_record));
+		}
+		v=sort_tuples<Tup,2>(v);
+		print_table(v);
+		cout<<"No finals results:"<<no_finals<<"\n";
+	})
+};
+
+typedef std::function<bool(Match_info const&)> Filter_func;
+typedef std::function<Filter_func(string)> Filter_option;
+typedef tuple<string,string,Filter_option> Filter_option_elem;
+
+static const vector<Filter_option_elem> FILTER_OPTIONS{
+	Filter_option_elem(
+		"team",
+		"Exclude matches that do not include the given team.  May be used multiple times.",
+		[](string s){
+			Team team{s};
+			return [team](Match_info const& m)->bool{
+				return teams(m)&team;
+			};
+		}
+	),
+	Filter_option_elem(
+		"competition_level",
+		[](){
+			stringstream ss;
+			ss<<"Show only the given competion level.  Options:";
+			for(auto a:competition_levels()){
+				ss<<" "<<a;
+			}
+			return ss.str();
+		}(),
+		[](string s){
+			auto p=parse_competition_level(s);
+			if(!p){
+				cout<<"Error: Could not parse to a competition level: \""<<s<<"\"\n";
+				exit(1);
+			}
+			auto level=*p;
+			return [level](Match_info const& m){ return m.competition_level==level; };
+		}
+	),
+	Filter_option_elem(
+		"event",
+		"Exclude events whose \"event key\" does not match the given argument.",
+		[](string s){
+			return [s](Match_info const& m){ return m.event==s; };
+		}
+	)
+};
+
 int run_main(map<string,vector<string>> const& flags){
 	set<string> flags_used;
 	auto get_flag=[&](string name)->Maybe<vector<string>>{
@@ -635,183 +824,7 @@ int run_main(map<string,vector<string>> const& flags){
 		) //this is experimental.
 	};
 
-	typedef std::function<bool(Match_info const&)> Filter_func;
-	typedef std::function<Filter_func(string)> Filter_option;
-	typedef tuple<string,string,Filter_option> Filter_option_elem;
-	vector<Filter_option_elem> filter_options{
-		Filter_option_elem(
-			"team",
-			"Exclude matches that do not include the given team.  May be used multiple times.",
-			[](string s){
-				Team team{s};
-				return [team](Match_info const& m)->bool{
-					return teams(m)&team;
-				};
-			}
-		),
-		Filter_option_elem(
-			"competition_level",
-			[](){
-				stringstream ss;
-				ss<<"Show only the given competion level.  Options:";
-				for(auto a:competition_levels()){
-					ss<<" "<<a;
-				}
-				return ss.str();
-			}(),
-			[](string s){
-				auto p=parse_competition_level(s);
-				if(!p){
-					cout<<"Error: Could not parse to a competition level: \""<<s<<"\"\n";
-					exit(1);
-				}
-				auto level=*p;
-				return [level](Match_info const& m){ return m.competition_level==level; };
-			}
-		),
-		Filter_option_elem(
-			"event",
-			"Exclude events whose \"event key\" does not match the given argument.",
-			[](string s){
-				return [s](Match_info const& m){ return m.event==s; };
-			}
-		)
-	};
-	vector<Filter_func> filters;
-	for(auto const& p:filter_options){
-		auto b=get_flag(get<0>(p));
-		if(b){
-			for(auto elem:*b){
-				filters|=get<2>(p)(elem);
-			}
-		}
-	}
-
-	typedef tuple<string,string,std::function<void(vector<Match_info> const&)>> Display_option;
-
-	vector<Display_option> display_options={
-		Display_option(
-			"matches",
-			"Matches listed individually",
-			[](vector<Match_info> const& m){
-				for(auto a:m){
-					cout<<a<<"\n";
-				}
-			}
-		),
-		Display_option(
-			"averages",
-			"Show summary statistics",
-			[](vector<Match_info> const& m){
-				cout<<"mean="<<mean(scores(m))<<"\n";
-				cout<<"median="<<median(scores(m))<<"\n";
-				cout<<"mode="<<mode(scores(m))<<"\n";
-				cout<<"quartiles:"<<quartiles(scores(m))<<"\n";
-				cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
-				cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
-			}
-		),
-		Display_option(
-			"gap",
-			"The ratio of the average win score to the averages loss score",
-			[](vector<Match_info> const& m){
-				auto w=mean_score(winning_alliances(m));
-				auto l=mean_score(losing_alliances(m));
-				if(w&&l){
-					cout<<(*w / *l)<<endl;
-				}else{
-					cout<<w;
-				}
-			}
-		),
-		Display_option(
-			"records",
-			"Win-loss-tie records by team",
-			[](vector<Match_info> const& m){
-				auto c=calculate_records(m);
-				auto rec=mapf([](pair<Team,Record> p){ return make_tuple(p.first,p.second,win_portion(p.second)); },c);
-				rec=sort_tuples<tuple<Team,Record,double>,2>(rec);
-				for(auto a:rec){
-					TuplePrinter<tuple<Team,Record,double>,3>::print(cout,"\t",a);
-					cout<<"\n";
-				}
-			}
-		),
-		Display_option(
-			"head_to_head",
-			"Results between pairs of teams",
-			[](vector<Match_info> const& m){
-				//typedef tuple<Team,Team,unsigned,unsigned,unsigned,unsigned> TT;
-				print_table(reversed(sort_tuples<Flat_head_to_head,2>(flat_head_to_head(m))));
-			}
-		),
-		Display_option(
-			"html_head_to_head",
-			"Same as --head_to_head but in HTML form.  Crashes browsers due to size.",
-			//"Warning: This will create a file whole size is measured in megabytes."
-			//"The problem with that is that you may crash Firefox or Konqueror, lynx appears to hang, etc.  elinks seems to be fine though.  "
-			//"You probably just want this output as text.",
-			[](vector<Match_info> const& m){
-				print_html_table(reversed(sort_tuples<Flat_head_to_head,2>(flat_head_to_head(m))));
-			}
-		),
-		Display_option("teams","List team numbers",[](vector<Match_info> const& m){ cout<<teams(m)<<"\n"; }),
-		Display_option("team_count","Number of teams",[](vector<Match_info> const& m){ cout<<"Teams: "<<teams(m).size()<<"\n"; }),
-		Display_option("events","Event names",[](vector<Match_info> const& m){ cout<<events(m)<<"\n"; }),
-		Display_option("event_count","Number of events",[](vector<Match_info> const& m){ cout<<"Events: "<<events(m).size()<<"\n"; }),
-		Display_option("competition_levels","Levels of competition included",[](vector<Match_info> const& m){ cout<<competition_level(m)<<"\n"; }),
-		Display_option("finals","How often different teams make the eliminations",[](vector<Match_info> const& m){
-			auto f=finals_appearances(m);
-			typedef tuple<Team,unsigned,unsigned,unsigned> Tup;
-			vector<Tup> v;
-			for(auto p:f){
-				auto team=p.first;
-				auto events=p.second.first;
-				auto elims=p.second.second;
-				v|=Tup(team,events,elims,events-elims);
-			}
-			v=sort_tuples<Tup,3>(v);
-			//v=filter([](Tup t){ return get<2>(t)==0; },v);
-			print_table(v);
-			//for(auto a:v) cout<<a<<"\n";
-		}),
-		Display_option("rank","Qualification win percentages for winning alliances",[](vector<Match_info> const& m){
-			//try to figure out which alliance has won an event with the worst record for its members before the elimination rounds.
-			typedef tuple<Event_key,set<Team>,double> Tup;
-			vector<Tup> v;
-			vector<Event_key> no_finals;
-			for(auto event_p:segregate([](Match_info mi){ return mi.event; },m)){
-				auto event_key=event_p.first;
-				auto matches=event_p.second;
-				auto finals_matches=finals(matches);
-				if(finals_matches.size()==0){
-					no_finals|=event_key;
-					continue;
-				}
-				auto winning_teams=winners(last(finals_matches));
-				auto qual_matches=quals(matches);
-				auto recs=calculate_records(qual_matches);
-				//need to figure out the winning alliance
-				//then, for each of its members, find their qualification record
-				//add them all up and put into the vector.
-
-				//to start with, going to start by just figuring out the record of everyone in the finals.
-				//auto winning_teams=teams(finals_matches);
-				Record winning_alliance_record;
-				for(auto team:winning_teams){
-					winning_alliance_record+=recs[team];
-				}
-				//cout<<event_p.first<<" "<<winning_alliance_record<<" "<<win_portion(winning_alliance_record)<<"\n";
-				v|=make_tuple(event_p.first,winning_teams,win_portion(winning_alliance_record));
-			}
-			v=sort_tuples<Tup,2>(v);
-			print_table(v);
-			cout<<"No finals results:"<<no_finals<<"\n";
-		})
-	};
-
-	//--help should be added to the top level modes list.
-	if(get_flag("help")){
+	auto run_help=[&top_levels](){
 		cout<<"Top level modes:"<<endl;
 		auto show_option=[](string name,string helptext){
 			cout<<"\t--"<<name;
@@ -827,15 +840,17 @@ int run_main(map<string,vector<string>> const& flags){
 		show_option("year","Include the specified year.  Defaults to 2013.  May be used multiple times.");
 		show_option("normalize","Multiply all match scores by a factor the make the average match score for every year 100.");
 		cout<<"Filters:"<<endl;
-		for(auto a:filter_options){
+		for(auto a:FILTER_OPTIONS){
 			SHOW_OPTION(a);//cout<<"\t--"<<get<0>(a)<<"\t"<<get<1>(a)<<endl;
 		}
 		cout<<"Display options:"<<endl;
-		for(auto a:display_options){
+		for(auto a:DISPLAY_OPTIONS){
 			SHOW_OPTION(a);//cout<<"\t--"<<get<0>(a)<<"\t"<<get<1>(a)<<endl;
 		}
 		#undef SHOW_OPTION
-	}
+		return 0;
+	};
+	top_levels|=Tup("help","Show this screen",run_help);
 
 	for(auto a:top_levels){
 		if(flags.find(get<0>(a))!=end(flags)){
@@ -852,20 +867,21 @@ int run_main(map<string,vector<string>> const& flags){
 
 	if(get_flag("normalize")){
 		//normalize by the average score of the year that it's for
-		//int year=2010;//todo: make this be whatever year the match is from
-		/*auto m1=matches(year);
-		cout<<"m1:"<<m1.size()<<endl;
-		auto s1=scores(m1);
-		cout<<"s1:"<<s1<<endl;
-		double mn1=mean(s1);
-		cout<<"mn1:"<<mn1<<endl;*/
-		//auto mean1=*mean(scores(matches(year)));
-		//cout<<"mean1="<<mean1<<endl;
 		for(auto& match:m){
-			//this is not going to work very well to start with since the scores are stored as integers...maybe should make it out of 100% instead
+			//doing out of 100 since all the scores are stored as integers
 			auto m2=average_score(year(match));
 			for(auto &a:match.alliances){
 				a.second.score/=(m2/100);
+			}
+		}
+	}
+
+	vector<Filter_func> filters;
+	for(auto const& p:FILTER_OPTIONS){
+		auto b=get_flag(get<0>(p));
+		if(b){
+			for(auto elem:*b){
+				filters|=get<2>(p)(elem);
 			}
 		}
 	}
@@ -877,7 +893,7 @@ int run_main(map<string,vector<string>> const& flags){
 		m
 	);
 
-	for(auto p:display_options){
+	for(auto p:DISPLAY_OPTIONS){
 		if(get_flag(get<0>(p))) get<2>(p)(m);
 	}
 	auto unused=a_and_not_b(keys(flags),flags_used);

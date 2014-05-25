@@ -273,6 +273,23 @@ std::map<unsigned,std::vector<T>> count2(std::vector<T> v){
 	return r;
 }
 
+void typeset_table_inner(std::vector<std::vector<std::string>> const&);
+
+template<typename Collection>
+void typeset_table(Collection const& c){
+	using std::vector;
+	using std::string;
+	vector<vector<string>> v;
+	for(auto a:c){
+		vector<string> v1;
+		for(auto b:a){
+			v1|=as_string(b);
+		}
+		v|=v1;
+	}
+	typeset_table_inner(v);
+}
+
 template<typename Collection>
 void print_table(Collection const& c){
 	for(auto const& a:c){

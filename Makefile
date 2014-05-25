@@ -1,4 +1,5 @@
 SHELL=/bin/bash
+CXX=g++-4.8
 CFLAGS=-O3 --std=c++0x -Wall -Werror
 DEPS=*.h
 CFILES=$(shell ls *.cpp | grep -v cmp.cpp)

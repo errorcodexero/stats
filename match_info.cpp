@@ -32,6 +32,18 @@ ostream& operator<<(ostream& o,Competition_level c){
 	}
 }
 
+vector<Competition_level> competition_levels(){
+	vector<Competition_level> r;
+	#define X(name) r|=Competition_level::name;
+	X(QUALS)
+	X(EIGHTHS)
+	X(QUARTERS)
+	X(SEMIS)
+	X(FINALS)
+	#undef X
+	return r;
+}
+
 ostream& operator<<(ostream& o,Match_info::Alliance const& a){
 	return o<<"Alliance("<<a.score<<" "<<a.teams<<")";
 }

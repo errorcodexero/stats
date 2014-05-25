@@ -17,6 +17,7 @@ enum class Competition_level{
 
 Maybe<Competition_level> parse_competition_level(std::string);
 std::ostream& operator<<(std::ostream& o,Competition_level);
+std::vector<Competition_level> competition_levels();
 
 typedef std::string Event_key;
 

@@ -150,3 +150,34 @@ vector<string> args(int argc,char **argv){
 }
 
 int atoi(string const& s){ return ::atoi(s.c_str()); }
+
+template<typename T>
+vector<size_t> sizes(vector<T> v){
+	vector<size_t> r;
+	for(auto a:v){
+		r|=a.size();
+	}
+	return r;
+}
+
+template<typename T>
+size_t max_size(vector<T> v){
+	return max(sizes(v));
+}
+
+void typeset_table_inner(vector<vector<string>> const& v){
+	unsigned most_columns=max_size(v);//max(mapf([](vector<string> v){ return v.size(); },v));
+	vector<vector<string>> columns;
+	for(unsigned i=0;i<most_columns;i++){
+		vector<string> items;
+		for(auto a:v){
+			if(a.size()>i) items|=a[i];
+		}
+	}
+	//vector<unsigned> max_lengths=mapf(max_size<vector<vector<string>>>,columns);
+	vector<unsigned> max_lengths;
+	for(auto col:columns){
+		max_lengths|=max_size(col);
+	}
+	nyi
+}

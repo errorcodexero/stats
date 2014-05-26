@@ -198,6 +198,7 @@ Maybe<double> mean(std::vector<int> const&);
 Maybe<double> median(std::vector<int>);
 Maybe<int> mode(std::vector<int> const&);
 std::vector<int> quartiles(std::vector<int>);
+std::vector<int> distrib(std::vector<int>);
 
 template<typename T>
 T sum(std::vector<T> v){

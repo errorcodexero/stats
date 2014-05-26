@@ -125,6 +125,12 @@ vector<int> quartiles(vector<int> v){
 	return vector<int>{v[0],v[v.size()/4],v[v.size()/2],v[v.size()*3/4],v[v.size()-1]};
 }
 
+vector<int> distrib(vector<int> v){
+	sort(begin(v),end(v));
+	if(!v.size()) return vector<int>();
+	return vector<int>{v[0],v[v.size()/10],v[v.size()/4],v[v.size()/2],v[v.size()*3/4],v[v.size()*9/10],v[v.size()-1]};
+}
+
 string tag(string const& tag,string const& body){
 	stringstream ss;
 	ss<<"<"<<tag<<">"<<body<<"</"<<tag<<">";

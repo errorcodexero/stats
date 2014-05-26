@@ -579,6 +579,19 @@ double average_score(int year){
 	return f->second;
 }
 
+double calc_median_score(int year){
+	return *median(scores(matches(year)));
+}
+
+double median_score(int year){
+	static map<int,double> cache;
+	auto f=cache.find(year);
+	if(f==end(cache)){
+		return cache[year]=calc_median_score(year);
+	}
+	return f->second;
+}
+
 Year year(Event_key const& e){
 	return atoi(e);
 }
@@ -609,6 +622,16 @@ static const vector<Display_option> DISPLAY_OPTIONS={
 			cout<<"quartiles:"<<quartiles(scores(m))<<"\n";
 			cout<<"Mean given won="<<mean_score(winning_alliances(m))<<"\n";
 			cout<<"Mean given lost="<<mean_score(losing_alliances(m))<<"\n";
+		}
+	),
+	Display_option(
+		"q",
+		"Show distribution of scores: min/10%/25%/50%/75%/90%/max",
+		[](vector<Match_info> const& m){
+			for(auto a:distrib(scores(m))){
+				cout<<a<<"\t";
+			}
+			cout<<endl;
 		}
 	),
 	Display_option(
@@ -776,6 +799,17 @@ static const vector<Filter_option_elem> FILTER_OPTIONS{
 	)
 };
 
+set<Year> years(vector<Match_info> v){
+	return to_set(mapf([](Match_info const& m){ return year(m); },v));
+}
+
+template<typename T>
+set<string> as_strings(set<T> s){
+	set<string> r;
+	for(auto a:s) r|=as_string(a);
+	return r;
+}
+
 int run_main(map<string,vector<string>> const& flags){
 	set<string> flags_used;
 	auto get_flag=[&](string name)->Maybe<vector<string>>{
@@ -876,6 +910,15 @@ int run_main(map<string,vector<string>> const& flags){
 		}
 	}
 
+	if(get_flag("normalize_median")){
+		for(auto& match:m){
+			auto m2=median_score(year(match));
+			for(auto& a:match.alliances){
+				a.second.score/=(m2/100);
+			}
+		}
+	}
+
 	vector<Filter_func> filters;
 	for(auto const& p:FILTER_OPTIONS){
 		auto b=get_flag(get<0>(p));
@@ -887,15 +930,39 @@ int run_main(map<string,vector<string>> const& flags){
 	}
 
 	m=filter(
-		[filters](Match_info m){
+		[filters](Match_info const& m){
 			return all(mapf([m](Filter_func f){ return f(m); },filters));
 		},
 		m
 	);
 
-	for(auto p:DISPLAY_OPTIONS){
-		if(get_flag(get<0>(p))) get<2>(p)(m);
+	vector<pair<string,Filter_func>> groups;
+	auto g=get_flag("group");
+	if(g){
+		//get the available values for each group
+		//to start with: year,event
+		auto group_by=*g;
+		/*map<string,set<string>> values;
+		values["year"]=as_strings(years(m));
+		values["event"]=events(m);*/
+		//cout<<values<<endl;
+		if(group_by.size()!=1) nyi
+		if(group_by[0]!="year") nyi
+		for(auto year1:years(m)){
+			groups|=pair<string,Filter_func>(as_string(year1),[year1](Match_info const& m){ return year(m)==year1; });
+		}
+	}else{
+		groups|=pair<string,Filter_func>("all",[](Match_info const&){ return 1; });
 	}
+
+	for(auto group:groups){
+		cout<<group.first<<"\t";
+		auto m2=filter(group.second,m);
+		for(auto p:DISPLAY_OPTIONS){
+			if(get_flag(get<0>(p))) get<2>(p)(m2);
+		}
+	}
+
 	auto unused=a_and_not_b(keys(flags),flags_used);
 	if(unused.size()){
 		cout<<"Error: Unused flags:"<<unused<<"\n";

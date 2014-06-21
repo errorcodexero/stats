@@ -952,11 +952,13 @@ int run_main(map<string,vector<string>> const& flags){
 			groups|=pair<string,Filter_func>(as_string(year1),[year1](Match_info const& m){ return year(m)==year1; });
 		}
 	}else{
-		groups|=pair<string,Filter_func>("all",[](Match_info const&){ return 1; });
+		groups|=pair<string,Filter_func>("",[](Match_info const&){ return 1; });
 	}
 
 	for(auto group:groups){
-		cout<<group.first<<"\t";
+		if(group.first.size()){
+			cout<<group.first<<"\t";
+		}
 		auto m2=filter(group.second,m);
 		for(auto p:DISPLAY_OPTIONS){
 			if(get_flag(get<0>(p))) get<2>(p)(m2);

@@ -96,6 +96,12 @@ Maybe<double> median(vector<int> v){
 	return v[v.size()/2];//could do the right thing when length is divisible by 2.
 }
 
+Maybe<double> median(vector<double> v){
+	if(v.empty()) return Maybe<double>();
+	sort(begin(v),end(v));
+	return v[v.size()/2];
+}
+
 Maybe<int> mode(vector<int> const& v){
 	if(!v.size()) return Maybe<int>();
 	map<int,Default<int,0>> m;
@@ -128,7 +134,7 @@ vector<int> quartiles(vector<int> v){
 vector<int> distrib(vector<int> v){
 	sort(begin(v),end(v));
 	if(!v.size()) return vector<int>();
-	return vector<int>{v[0],v[v.size()/10],v[v.size()/4],v[v.size()/2],v[v.size()*3/4],v[v.size()*9/10],v[v.size()-1]};
+	return vector<int>{v[0],v[v.size()*5/100],v[v.size()/4],v[v.size()/2],v[v.size()*3/4],v[v.size()*95/100],v[v.size()-1]};
 }
 
 string tag(string const& tag,string const& body){

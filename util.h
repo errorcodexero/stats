@@ -196,6 +196,7 @@ std::string cat(char,char);
 std::vector<std::string> lines(std::string const&);
 Maybe<double> mean(std::vector<int> const&);
 Maybe<double> median(std::vector<int>);
+Maybe<double> median(std::vector<double>);
 Maybe<int> mode(std::vector<int> const&);
 std::vector<int> quartiles(std::vector<int>);
 std::vector<int> distrib(std::vector<int>);
@@ -298,6 +299,15 @@ void print_table(Collection const& c){
 		std::cout<<"\n";
 		//cout<<a<<"\n";
 	}
+}
+
+template<typename T>
+std::vector<T>& operator/=(std::vector<T>& v,double d){
+	//return mapf([d](T t){ return t/d; },v);
+	for(auto &a:v){
+		a/=d;
+	}
+	return v;
 }
 
 #endif

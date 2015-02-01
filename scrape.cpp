@@ -203,21 +203,21 @@ vector<Event> events(){
 	return r;
 }
 
-ostream& operator<<(ostream& o,json_spirit::Value const& v){
-	write(v,o,json_spirit::pretty_print);
+ostream& operator<<(ostream& o,json_spirit::Value const&){
+	nyi//write(v,o,json_spirit::pretty_print);
 	return o;
 }
 
-ostream& operator<<(ostream& o,json_spirit::Object const& obj){
-	write(obj,o,json_spirit::pretty_print);
+ostream& operator<<(ostream& o,json_spirit::Object const&){
+	nyi//write(obj,o,json_spirit::pretty_print);
 	return o;
 }
 
-template<typename A>
+/*template<typename A>
 ostream& operator<<(ostream& o,json_spirit::Pair_impl<A> const& p){
 	//write(p,o,json_spirit::pretty_print);
 	return o<<"("<<p.name_<<" "<<p.value_<<")";
-}
+}*/
 
 Maybe<Date> parse_date(Maybe<string> m){
 	if(m==Maybe<string>()) return Maybe<Date>();
@@ -505,7 +505,7 @@ Match_info match_info(string const& match_key){
 					}else if(n2=="teams"){
 						alliance.teams=mapf([](string s){ return Team(s); },get_array(v2));
 					}else{
-						cout<<p2<<"\n";
+						nyi//cout<<p2<<"\n";
 						nyi
 					}
 				}

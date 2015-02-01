@@ -169,7 +169,7 @@ T min(std::vector<T> const& v){
 	return r;
 }
 
-template<typename T,unsigned N>
+template<typename T,size_t N>
 std::ostream& operator<<(std::ostream& o,std::array<T,N> a){
 	o<<"[ ";
 	for(auto elem:a) o<<elem<<" ";

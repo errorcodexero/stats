@@ -34,7 +34,7 @@ ostream& operator<<(ostream& o,json_spirit::Value_impl<T> j){
 		case 4:return o<<j.get_int();
 		case 5:return o<<j.get_real();
 		case 6:
-			write(j,o,json_spirit::pretty_print);
+			nyi//write(j,o,json_spirit::pretty_print);
 			return o;
 		default:
 			o<<"value="<<j.type();

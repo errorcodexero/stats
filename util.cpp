@@ -187,7 +187,7 @@ void typeset_table_inner(vector<vector<string>> const& v){
 		}
 	}
 	//vector<unsigned> max_lengths=mapf(max_size<vector<vector<string>>>,columns);
-	vector<unsigned> max_lengths;
+	vector<size_t> max_lengths;
 	for(auto col:columns){
 		max_lengths|=max_size(col);
 	}

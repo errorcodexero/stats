@@ -77,7 +77,7 @@ std::set<T> to_set(std::vector<T> const& v){
 	return r;
 }
 
-template<typename T,unsigned LEN>
+template<typename T,size_t LEN>
 std::set<T> to_set(std::array<T,LEN> a){
 	std::set<T> r;
 	for(auto elem:a) r|=elem;

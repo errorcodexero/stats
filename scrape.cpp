@@ -232,8 +232,40 @@ Maybe<Date> parse_date(Maybe<string> m){
 	return Date(year,month,day);
 }
 
+struct Event_v2{
+	string key;
+	string website;
+	bool official;
+	typedef string Date;
+	Date end_date;
+	string name;
+	string short_name;
+	Maybe<string> facebook_eid;
+	Maybe<string> venue_address;
+	Maybe<string> event_district;
+	string location;
+	string event_code;
+	int year;
+	vector<string> webcast;
+	vector<int> alliances;
+	string event_type_string;
+	Date start_date;
+	int event_type;//ex:3
+};
+
+vector<Event_v2> get_events_v2(int year){
+	string url="http://www.thebluealliance.com/api/v2/events/1992";//+as_string(year);
+	auto data=scrape_cached(url);
+	//cout<<data<<"\n";
+	json_spirit::Value value;
+	json_spirit::read("{\"hi\":\"Tom\"}",value);
+	nyi
+}
+
 //will return the keys
 vector<BEvent> get_events(int year){
+	get_events_v2(year);
+	nyi
 	//if wanted to do this the super-clean way, would have the parsing function seperate from the downloading.  
 	string url="http://www.thebluealliance.com/api/v1/events/list?year="+as_string(year);
 	json_spirit::Value value;

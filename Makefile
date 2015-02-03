@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 CXX=g++
-CFLAGS=--std=c++11 -Wall -Wextra -Werror
+CFLAGS=--std=c++11 -Wall -Wextra
 DEPS=*.h
 CFILES=$(shell ls *.cpp | grep -v cmp.cpp)
 OBJ=$(CFILES:cpp=o)

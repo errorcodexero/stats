@@ -1,4 +1,4 @@
-g++ -Wall -Wextra -std=c++11 1.cpp ../util.cpp ../exception.cpp ../str.cpp -ljsoncpp 2>&1 && \
+g++ -Wall -Wextra -std=c++11 scrape.cpp 1.cpp ../util.cpp ../exception.cpp ../str.cpp -ljsoncpp 2>&1 && \
 	./a.out
 #	./a.out > 1.dot && \
 #	dot -Tpng -o 1.png 1.dot -Grankdir=LR && \

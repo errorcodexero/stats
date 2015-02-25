@@ -310,4 +310,12 @@ std::vector<T>& operator/=(std::vector<T>& v,double d){
 	return v;
 }
 
+template<typename Collection>
+bool all(Collection const& c){
+	for(auto elem:c){
+		if(!elem) return 0;
+	}
+	return 1;
+}
+
 #endif

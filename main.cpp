@@ -32,14 +32,6 @@ It would be interesting to try to get the data about what the pick orders was.
 */
 
 //should probably move to util.
-template<typename Collection>
-bool all(Collection const& c){
-	for(auto elem:c){
-		if(!elem) return 0;
-	}
-	return 1;
-}
-
 double rerange(double orig_min,double orig_max,double new_min,double new_max,double value){
 	double portion=(value-orig_min)/(orig_max-orig_min);
 	return new_min+portion*(new_max-new_min);

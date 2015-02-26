@@ -1,1 +1,14 @@
-g++ -std=c++1y 1.cpp 2>&1 && ./a.out
+g++ -std=c++1y -Wall -Wextra -Werror 1.cpp \
+	event_awards.cpp \
+	event_alliances.cpp \
+	common.cpp \
+	award_listings.cpp \
+	match_results.cpp \
+	ancillary.cpp\
+	../str.cpp\
+	event_rankings.cpp\
+	event_schedule.cpp\
+	hybrid_schedule.cpp\
+	season_data.cpp\
+	event_listing.cpp\
+	2>&1 && ./a.out

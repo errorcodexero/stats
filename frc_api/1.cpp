@@ -118,5 +118,23 @@ int main(){
 		}};
 		cout<<b<<"\n";
 	}
+
+	/*#include "district_listings.h"
+	#include "team_listings.h"*/
+	{
+		District_listings a{0,{}};
+		cout<<a<<"\n";
+
+		District_query q;
+		cout<<q<<"\n";
+	}
+
+	{
+		Team_listings t{1,1,1,1,{}};
+		cout<<t<<"\n";
+
+		Team_listings_query q;
+		cout<<q<<"\n";
+	}
 	return 0;
 }

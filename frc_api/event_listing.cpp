@@ -1,4 +1,5 @@
 #include "event_listing.h"
+#include "../util.h"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ Event_listing_query::Event_listing_query(Data a):data_(a){
 	}
 }
 
-Data Event_listing_query::get()const{ return data_; }
+Event_listing_query::Data Event_listing_query::get()const{ return data_; }
 
 ostream& operator<<(ostream& o,Event_listing_query const& a){
 	o<<"/api/v1.0/events/"<<a.get().season;

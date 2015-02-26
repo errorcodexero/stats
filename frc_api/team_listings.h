@@ -1,6 +1,9 @@
 #ifndef TEAM_LISTINGS_H
 #define TEAM_LISTINGS_H
 
+#include "common.h"
+#include "event_listing.h"
+
 typedef int Rookie_year;
 
 #define TEAM_ITEMS\

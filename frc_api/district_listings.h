@@ -1,6 +1,8 @@
 #ifndef DISTRICT_LISTINGS_H
 #define DISTRICT_LISTINGS_H
 
+#include "event_listing.h"
+
 #define DISTRICT_ITEMS\
 	X(District_code,code)\
 	X(std::string,name)

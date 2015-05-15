@@ -12,6 +12,7 @@ typedef string Prediction;
 map<Team,Prediction> read_prediction_file(string const& filename){
 	map<Team,Prediction> r;
 	for(auto a:skip(4,lines(slurp(filename)))){
+		if(a.size()==0) continue;
 		auto sp=split(a,'\t');
 		//cout<<sp<<endl;
 		assert(sp.size()==3);
@@ -36,9 +37,10 @@ ostream& operator<<(ostream& o,Entry)nyi
 vector<Entry> read_district_rankings(string const& filename){
 	vector<Entry> r;
 	for(auto line:lines(slurp(filename))){
+		if(line.empty()) continue;
 		auto sp=split(line,'\t');
 		//cout<<sp<<endl;
-		assert(sp.size()==8);
+		assert(sp.size()==8 || sp.size()==7);
 		auto rank=sp.at(0);
 		auto district_points=sp.at(1);
 		auto team=Team{sp.at(2)};
@@ -56,8 +58,14 @@ vector<Entry> read_district_rankings(string const& filename){
 				assert(0);
 			}
 		}
-		auto frc_cmp=sp.at(6);
-		auto rookie_bonus=sp.at(7);
+		string frc_cmp;
+		string rookie_bonus;
+		if(sp.size()==7){
+			rookie_bonus=sp.at(6);
+		}else{
+			frc_cmp=sp.at(6);
+			rookie_bonus=sp.at(7);
+		}
 		r|=Entry{rank,district_points,team,event1,event2,dcmp,frc_cmp,rookie_bonus};
 	}
 	return r;

@@ -1,0 +1,143 @@
+Total teams: 158
+Home is one that earned points at last year: 113
+
+2016	2017	Event name
+Teams	Home
+34	27	Auburn
+39	12	Auburn Mountainview
+39	6	Central Washington University
+30	6	Clackamas Academy of Industrial Science
+38	30	Glacier Peak
+0	28	Lake Oswego
+34	11	Mount Vernon
+26	0	Philomath
+34	24	West Valley
+36	14	Wilsonville
+
+Teams that did not earn points at their 2017 home event in 2016:
+Auburn
+	[488, 1258, 1983, 2557, 3574, 3576, 4450, 5803]
+Auburn Mountainview
+	[3221, 3588]
+Central Washington University
+	[3831]
+Clackamas Academy of Industrial Science
+	[753, 3711]
+Glacier Peak
+	[1294]
+Lake Oswego
+	[1432, 1510, 1540, 2002, 2374, 2411, 2471, 2635, 2733, 2811, 2915, 3131, 3192, 3636, 3673, 3674, 3812, 4051, 4127, 4132, 4488, 4662, 4692, 5450, 5956, 5970, 5975, 5977]
+Mount Vernon
+	[]
+Philomath
+	[]
+West Valley
+	[]
+Wilsonville
+	[568, 1359, 3024]
+
+Of the teams that earned points at an event last year what is their 2017 home event?
+Auburn
+	(19, 'Auburn')
+	(9, 'Auburn Mountainview')
+	(4, 'Glacier Peak')
+	(1, 'Wilsonville')
+	(1, 'Mount Vernon')
+Auburn Mountainview
+	(17, 'Auburn')
+	(10, 'Auburn Mountainview')
+	(8, 'Glacier Peak')
+	(4, 'Mount Vernon')
+Central Washington University
+	(24, 'West Valley')
+	(6, 'Auburn')
+	(5, 'Central Washington University')
+	(2, 'Auburn Mountainview')
+	(1, 'Glacier Peak')
+	(1, 'Clackamas Academy of Industrial Science')
+Clackamas Academy of Industrial Science
+	(21, 'Lake Oswego')
+	(4, 'Wilsonville')
+	(4, 'Clackamas Academy of Industrial Science')
+	(1, 'Glacier Peak')
+Glacier Peak
+	(29, 'Glacier Peak')
+	(5, 'Mount Vernon')
+	(3, 'Auburn')
+	(1, 'Wilsonville')
+Lake Oswego
+Mount Vernon
+	(17, 'Glacier Peak')
+	(11, 'Mount Vernon')
+	(4, 'Auburn')
+	(1, 'Wilsonville')
+	(1, 'Auburn Mountainview')
+Philomath
+	(10, 'Wilsonville')
+	(10, 'Lake Oswego')
+	(3, 'Clackamas Academy of Industrial Science')
+	(2, 'Auburn')
+	(1, 'Auburn Mountainview')
+West Valley
+	(24, 'West Valley')
+	(5, 'Central Washington University')
+	(3, 'Lake Oswego')
+	(1, 'Auburn Mountainview')
+	(1, 'Auburn')
+Wilsonville
+	(21, 'Lake Oswego')
+	(11, 'Wilsonville')
+	(4, 'Clackamas Academy of Industrial Science')
+
+Of teams w/ a designated 2017 home, which events did they earn points at last year?
+Auburn
+	(19, 'Auburn')
+	(17, 'Auburn Mountainview')
+	(6, 'Central Washington University')
+	(4, 'Mount Vernon')
+	(3, 'Glacier Peak')
+	(2, 'Philomath')
+	(1, 'West Valley')
+Auburn Mountainview
+	(10, 'Auburn Mountainview')
+	(9, 'Auburn')
+	(2, 'Central Washington University')
+	(1, 'West Valley')
+	(1, 'Philomath')
+	(1, 'Mount Vernon')
+Central Washington University
+	(5, 'West Valley')
+	(5, 'Central Washington University')
+Clackamas Academy of Industrial Science
+	(4, 'Wilsonville')
+	(4, 'Clackamas Academy of Industrial Science')
+	(3, 'Philomath')
+	(1, 'Central Washington University')
+Glacier Peak
+	(29, 'Glacier Peak')
+	(17, 'Mount Vernon')
+	(8, 'Auburn Mountainview')
+	(4, 'Auburn')
+	(1, 'Clackamas Academy of Industrial Science')
+	(1, 'Central Washington University')
+Lake Oswego
+	(21, 'Wilsonville')
+	(21, 'Clackamas Academy of Industrial Science')
+	(10, 'Philomath')
+	(3, 'West Valley')
+Mount Vernon
+	(11, 'Mount Vernon')
+	(5, 'Glacier Peak')
+	(4, 'Auburn Mountainview')
+	(1, 'Auburn')
+Philomath
+West Valley
+	(24, 'West Valley')
+	(24, 'Central Washington University')
+Wilsonville
+	(11, 'Wilsonville')
+	(10, 'Philomath')
+	(4, 'Clackamas Academy of Industrial Science')
+	(1, 'Mount Vernon')
+	(1, 'Glacier Peak')
+	(1, 'Auburn')

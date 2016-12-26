@@ -2,7 +2,7 @@
 #include "util.h"
 #include "team.h"
 #include "scrape.h"
-#include "json_spirit.h"
+//#include "json_spirit.h"
 #include "str.h"
 #include "set.h"
 #include "main.h"
@@ -24,7 +24,7 @@ ostream& operator<<(ostream& o,Team_info const& a){
 	return o<<")";
 }
 
-template<typename T>
+/*template<typename T>
 ostream& operator<<(ostream& o,json_spirit::Value_impl<T> j){
 	switch(j.type()){
 		case 0:return o<<j.get_obj();
@@ -40,13 +40,13 @@ ostream& operator<<(ostream& o,json_spirit::Value_impl<T> j){
 			o<<"value="<<j.type();
 	}
 	return o;
-}
+}*/
 
-template<typename T>
+/*template<typename T>
 ostream& operator<<(ostream& o,json_spirit::Pair_impl<T> p){
 	o<<"("<<p.name_<<":"<<p.value_<<")";
 	return o;
-}
+}*/
 
 //www.thebluealliance.com/api/v2/team/<team key>/(<year>)
 Team_info get(Team team,Year year){
@@ -55,6 +55,8 @@ Team_info get(Team team,Year year){
 		ss<<"http://www.thebluealliance.com/api/v2/team/frc"<<team<<"/"<<year;
 		return ss.str();
 	}();
+	nyi
+	#if 0
 	json_spirit::Value value;
 	auto data=scrape_cached(url);
 	read(data,value);
@@ -115,6 +117,7 @@ Team_info get(Team team,Year year){
 		}
 	}
 	return r;//return Team_info{website,name,locality,region,team,country,location,team_number,key,nickname,events};
+	#endif
 }
 
 vector<string> words(string s){

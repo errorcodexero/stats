@@ -1,0 +1,1 @@
+make -j similarity 2>&1 && time ./similarity --team 1425 2>&1

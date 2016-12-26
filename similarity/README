@@ -1,0 +1,18 @@
+Which other teams is your team most similar to?
+
+There are lots of papers ranking teams based on their on-field performance, but teams could also be compared based on the kind of awards that they win.  So for every team I've made a ranking of the top 10 teams that do similarly at winning awards.  
+
+The format is as follows:
+[code]team_number[most_similar_team,2nd_most_similar,...][/code]
+
+Technical details:
+-Data is taken from The Blue Alliance; fictitious teams exist if TBA says they exist.
+-Similarity is calculated as follows: Sum of the squared differences between between each team's tendency to win an award type. 
+Where 
+[code]award_tendency = ((# of times won) - (expected # of times won)) / (events attended)[/code]
+where 
+[code]"expected # of times won" = sum over all events attened( # of times award given out / # of teams attending ) [/code]
+
+Note that time doesn't come into this formula at all - winning something in 1992 is counted the same as winning it this year.  
+
+Also, a list of least similar teams is not very interesting because it's almost always going to be a team that has only competed for one year and won a bunch of awards.  

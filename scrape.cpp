@@ -8,7 +8,8 @@
 #include<boost/numeric/ublas/lu.hpp>
 #include<boost/numeric/ublas/io.hpp>
 #include "boost/date_time/gregorian/gregorian.hpp"
-#include "json_spirit.h"
+//#include "json_spirit.h"
+#include "nlohmann/json.hpp"
 #include "util.h"
 #include "str.h"
 #include "map.h"
@@ -17,7 +18,10 @@
 #include "bevent.h"
 #include "match_info.h"
 
+using namespace nlohmann;
 using namespace std;
+
+//using Json_obj_it=nlohmann::basic_json<>::iter_impl<nlohmann::basic_json<>>;
 
 template<typename K,typename V>
 vector<pair<K,V>> map_to_pairs(map<K,V> m){
@@ -203,15 +207,15 @@ vector<Event> events(){
 	return r;
 }
 
-ostream& operator<<(ostream& o,json_spirit::Value const&){
+/*ostream& operator<<(ostream& o,json_spirit::Value const&){
 	nyi//write(v,o,json_spirit::pretty_print);
 	return o;
-}
+}*/
 
-ostream& operator<<(ostream& o,json_spirit::Object const&){
+/*ostream& operator<<(ostream& o,json_spirit::Object const&){
 	nyi//write(obj,o,json_spirit::pretty_print);
 	return o;
-}
+}*/
 
 /*template<typename A>
 ostream& operator<<(ostream& o,json_spirit::Pair_impl<A> const& p){
@@ -232,43 +236,337 @@ Maybe<Date> parse_date(Maybe<string> m){
 	return Date(year,month,day);
 }
 
-struct Event_v2{
-	string key;
-	string website;
-	bool official;
-	typedef string Date;
-	Date end_date;
-	string name;
-	string short_name;
-	Maybe<string> facebook_eid;
-	Maybe<string> venue_address;
-	Maybe<string> event_district;
-	string location;
-	string event_code;
-	int year;
-	vector<string> webcast;
-	vector<int> alliances;
-	string event_type_string;
-	Date start_date;
-	int event_type;//ex:3
-};
+int pull_element(Json_obj_it it,string const& name,int*){
+	auto v=it.value();
 
-vector<Event_v2> get_events_v2(int year){
-	string url="http://www.thebluealliance.com/api/v2/events/1992";//+as_string(year);
-	auto data=scrape_cached(url);
-	//cout<<data<<"\n";
-	json_spirit::Value value;
-	json_spirit::read("{\"hi\":\"Tom\"}",value);
+	if(v.is_number()) return v;
+
+	if(v.is_string()){
+		string s=v;
+		int i=atoi(s.c_str());
+		if(as_string(i)==s){
+			return i;
+		}
+		if(name=="team_number" && i){
+			//this will make it ignore suffixes like "971B".
+			return i;
+		}
+	}
+
+	PRINT(name);
+	PRINT(v);
 	nyi
 }
 
+string pull_element(Json_obj_it it,string const& name,string*){
+	auto v=it.value();
+	if(!v.is_string()){
+		PRINT(name);
+		PRINT(v);
+	}
+	assert(v.is_string());
+	return v;
+}
+
+bool pull_element(Json_obj_it it,string const& name,bool*){
+	auto v=it.value();
+	if(v.is_boolean()) return v;
+	PRINT(name);
+	PRINT(it.key());
+	PRINT(it.value());
+	nyi
+}
+
+Date pull_element(Json_obj_it,string,Date*){
+	nyi
+}
+
+/*template<typename T>
+Maybe<T> pull_element(Json_obj_it it,string name,Maybe<T>*){
+	auto v=it.value();
+	if(v.is_null()){
+		return Maybe<T>();
+	}
+	return pull_element(it,name,(T*)0);
+}*/
+
+Recipient as_type(json j,const Recipient*){
+	Recipient r;
+	for(auto at=j.begin();at!=j.end();++at){
+		#define X(A,B) if(at.key()==""#B){\
+			r.B=pull_element(at,""#B,(A*)0);\
+			continue;\
+		}
+		RECIPIENT_ITEMS(X)
+		#undef X
+		PRINT(at.key());
+		nyi
+	}
+	return r;
+}
+
+int as_type(json j,int*){
+	if(!j.is_number()){
+		PRINT(j);
+		throw "not int";
+	}
+	assert(j.is_number());
+	return j;
+}
+
+string as_type(json j,string*){
+	if(j.is_string()){
+		nyi
+	}
+	PRINT(j);
+	nyi
+}
+
+Webcast as_type(json j,Webcast*){
+	return Webcast{};
+}
+
+BAlliance as_type(json j,BAlliance*){
+	return BAlliance{};
+}
+
+/*template<typename T>
+vector<T> pull_element(Json_obj_it it,string key,vector<T>*){
+	auto v=it.value();
+	assert(v.is_array());
+	vector<T> r;
+	for(auto elem:v){
+		try{
+			r|=as_type(elem,(T*)0);
+		}catch(...){
+			cout<<"Getting "<<key<<"\n";
+			nyi//throw;
+		}
+		//PRINT(elem);
+		//nyi
+	}
+	return r;
+
+	PRINT(v.is_null());
+	PRINT(v.is_boolean());
+	PRINT(v.is_number());
+	PRINT(v.is_object());
+	PRINT(v.is_array());
+	PRINT(v.is_string());
+	PRINT(v);
+	//auto found=it.find(key);
+	//PRINT(found);
+	nyi
+}*/
+
+ostream& operator<<(ostream& o,Webcast const&){
+	return o<<"Webcast()";
+}
+
+ostream& operator<<(ostream& o,BAlliance const&){
+	nyi
+}
+
+ostream& operator<<(ostream& o,Event_v2 const& a){
+	o<<"Event_v2( ";
+	#define X(A,B) o<<""#B<<":"<<a.B<<" ";
+	EVENT_V2_ITEMS(X)
+	#undef X
+	return o<<")";
+}
+
+Event_v2 parse_event(json j2){
+	Event_v2 ee;
+	set<string> seen;
+	for(auto it=j2.begin();it!=j2.end();++it){
+		bool found=0;
+		#define X(A,B) if(it.key()==""#B){\
+			seen.insert(""#B);\
+			found=1;\
+			ee.B=pull_element(it,""#B,(A*)nullptr);\
+		}
+		EVENT_V2_ITEMS(X)
+		#undef X
+		if(!found){
+			PRINT(it.key());
+			PRINT(it.value());
+			nyi
+		}
+	}
+
+	const set<string> all_elements{
+		#define X(A,B) ""#B,
+		EVENT_V2_ITEMS(X)
+		#undef X
+	};
+
+	auto unset=all_elements-seen;
+	if(unset.size()){
+		cout<<"Unset:"<<all_elements-seen<<"\n";
+		for(auto a:unset){
+			#define X(A,B) if(a==""#B) cout<<""#B<<"("<<""#A<<")\n";
+			EVENT_V2_ITEMS(X)
+			#undef X
+		}
+		nyi
+	}
+	return ee;
+}
+
+Recipient pull_element(Json_obj_it at,string,Recipient*){
+	PRINT(at.key());
+	PRINT(at.value());
+	nyi
+	//return Recipient_list{};
+}
+
+ostream& operator<<(ostream& o,Recipient const& a){
+	o<<"Recipient( ";
+	#define X(A,B) o<<""#B<<":"<<a.B<<" ";
+	RECIPIENT_ITEMS(X)
+	#undef X
+	return o<<")";
+}
+
+ostream& operator<<(ostream& o,Award_type a){
+	#define X(A) if(a==Award_type::A) return o<<""#A;
+
+	X(CHAIRMANS)
+    X(WINNER)
+    X(FINALIST)
+
+    X(WOODIE_FLOWERS)
+    X(DEANS_LIST)
+    X(VOLUNTEER)
+    X(FOUNDERS)
+    X(BART_KAMEN_MEMORIAL)
+    X(MAKE_IT_LOUD)
+
+    X(ENGINEERING_INSPIRATION )
+    X(ROOKIE_ALL_STAR )
+    X(GRACIOUS_PROFESSIONALISM )
+    X(COOPERTITION )
+    X(JUDGES )
+    X(HIGHEST_ROOKIE_SEED)
+    X(ROOKIE_INSPIRATION )
+    X(INDUSTRIAL_DEESIGN )
+    X(QUALITY )
+    X(SAFETY )
+    X(SPORTSMANSHIP )
+    X(CREATIVITY )
+    X(ENGINEERING_EXCELLENCE )
+    X(ENTREPRENEURSHIP )
+    X(EXCELLENCE_IN_DESIGN )
+    X(EXCELLENCE_IN_DESIGN_CAD )
+    X(EXCELLENCE_IN_DESIGN_ANIMATION )
+    X(DRIVING_TOMORROWS_TECHNOLOGY)
+    X(IMAGERY )
+    X(MEDIA_AND_TECHNOLOGY )
+    X(INNOVATION_IN_CONTROL)
+    X(SPIRIT )
+    X(WEBSITE )
+    X(VISUALIZATION)
+    X(AUTODESK_INVENTOR )
+    X(FUTURE_INNOVATOR )
+    X(RECOGNITION_OF_EXTRAORDINARY_SERVICE )
+    X(OUTSTANDING_CART )
+    X(WSU_AIM_HIGHER )
+    X(LEADERSHIP_IN_CONTROL)
+    X(NUM_1_SEED )
+    X(INCREDIBLE_PLAY)
+    X(PEOPLES_CHOICE_ANIMATION)
+    X(VISUALIZATION_RISING_STAR)
+    X(BEST_OFFENSIVE_ROUND)
+    X(BEST_PLAY_OF_THE_DAY)
+    X(FEATHERWEIGHT_IN_THE_FINALS)
+    X(MOST_PHOTOGENIC)
+    X(OUTSTANDING_DEFENSE)
+    X(POWER_TO_SIMPLIFY)
+    X(AGAINST_ALL_ODDS)
+    X(RISING_STAR)
+    X(CHAIRMANS_HONORABLE_MENTION)
+    X(CONTENT_COMMUNICATION_HONORABLE_MENTION)
+    X(TECHNICAL_EXECUTION_HONORABLE_MENTION)
+    X(REALIZATION)
+    X(REALIZATION_HONORABLE_MENTION)
+    X(DESIGN_YOUR_FUTURE)
+    X(DESIGN_YOUR_FUTURE_HONORABLE_MENTION)
+    X(SPECIAL_RECOGNITION_CHARACTER_ANIMATION)
+    X(HIGH_SCORE)
+    X(TEACHER_PIONEER)
+    X(BEST_CRAFTSMANSHIP)
+    X(BEST_DEFENSIVE_MATCH)
+    X(PLAY_OF_THE_DAY)
+    X(PROGRAMMING)
+    X(PROFESSIONALISM)
+    X(GOLDEN_CORNDOG)
+    X(MOST_IMPROVED_TEAM)
+	X(WILDCARD)
+	#undef X
+	assert(0);
+}
+
+ostream& operator<<(ostream& o,Award const& a){
+	o<<"Award( ";
+	#define X(A,B) o<<""#B<<":"<<a.B<<" ";
+	AWARD_ITEMS(X)
+	#undef X
+	return o<<")";
+}
+
+Award_type pull_element(Json_obj_it j,string name,Award_type*){
+	auto i=pull_element(j,name,(int*)0);
+	return (Award_type)i;
+}
+
+Award parse_award(json j){
+	Award r;
+	for(auto at=j.begin();at!=j.end();++at){
+		#define X(A,B) if(at.key()==""#B) r.B=pull_element(at,""#B,(A*)nullptr);
+		AWARD_ITEMS(X)
+		#undef X
+	}
+	return r;
+}
+
+std::vector<Award> calc_awards(string const& event_key){
+	auto url="https://www.thebluealliance.com/api/v2/event/"+event_key+"/awards";
+	auto data=scrape_cached(url);
+	auto j=json::parse(data);
+	return mapf(parse_award,j);
+}
+
+std::vector<Award> get_awards(string event_key){
+	static map<string,vector<Award>> cache;
+	auto f=cache.find(event_key);
+	if(f!=cache.end()){
+		return f->second;
+	}
+	return cache[event_key]=calc_awards(event_key);
+}
+
+vector<Event_v2> get_team_history(int team){
+	auto url="http://www.thebluealliance.com/api/v2/team/frc"+as_string(team)+"/history/events";
+	auto data=scrape_cached(url);
+	auto j=json::parse(data);
+	return mapf(parse_event,j);
+}
+
+vector<Event_v2> get_events_v2(int year){
+	string url="http://www.thebluealliance.com/api/v2/events/"+as_string(year);
+	auto data=scrape_cached(url);
+	//cout<<data<<"\n";
+	auto j=json::parse(data);
+	return mapf(parse_event,j);
+}
+
 //will return the keys
-vector<BEvent> get_events(int year){
-	get_events_v2(year);
+vector<Event_v2> get_events(int year){
+	return get_events_v2(year);
 	nyi
 	//if wanted to do this the super-clean way, would have the parsing function seperate from the downloading.  
 	string url="http://www.thebluealliance.com/api/v1/events/list?year="+as_string(year);
-	json_spirit::Value value;
+	nyi/*json_spirit::Value value;
 	auto data=scrape_cached(url);
 	read(data,value);
 	//cout<<value<<"\n";
@@ -322,7 +620,7 @@ vector<BEvent> get_events(int year){
 		//cout<<"b!\n";
 		r|=b;
 	}
-	return r;
+	return r;*/
 }
 
 vector<string> get_event_keys(int year){
@@ -356,7 +654,9 @@ ostream& operator<<(ostream& o,BEvent_details const& b){
 BEvent_details get_details(string const& event_code){
 	auto s=scrape_cached("http://www.thebluealliance.com/api/v1/event/details?event="+event_code);
 	//cout<<s<<"\n";
-	json_spirit::Value value;
+	auto j=json::parse(s);
+	PRINT(j);
+	nyi/*json_spirit::Value value;
 	read(s,value);
 	BEvent_details r;
 	//cout<<value<<"\n";
@@ -432,20 +732,20 @@ BEvent_details get_details(string const& event_code){
 			nyi
 		}
 	}
-	return r;
+	return r;*/
 }
 
 vector<BEvent_details> all_event_details(int year){
 	return mapf(get_details,get_event_keys(year));
 }
 
-vector<string> get_array(json_spirit::Value const& v){
+/*vector<string> get_array(json_spirit::Value const& v){
 	vector<string> r;
 	for(auto elem:v.get_array()){
 		r|=elem.get_str();
 	}
 	return r;
-}
+}*/
 
 template<typename A,typename B>
 class Either{
@@ -471,18 +771,18 @@ class Either{
 	}
 };
 
-json_spirit::Value remove_array(json_spirit::Value v){
+/*json_spirit::Value remove_array(json_spirit::Value v){
 	auto a=v.get_array();
 	assert(a.size()==1);
 	return a[0];
-}
+}*/
 
 //example input: 2010cmp_f1m1
 Match_info match_info(string const& match_key){
 	//cout<<"m="<<match_key<<"\n";
 	//cout<<"going to ...\n";
 	auto s=scrape_cached("http://www.thebluealliance.com/api/v1/match/details?match="+match_key);
-	json_spirit::Value value;
+	nyi/*json_spirit::Value value;
 	read(s,value);
 	Match_info r;
 	//cout<<"starting\n";
@@ -579,7 +879,7 @@ Match_info match_info(string const& match_key){
 		//cout<<"Not ok: "<<r<<"\n";
 	}
 	//assert(ok(r));
-	return r;
+	return r;*/
 }
 
 //opr: columns=teams,rows=present on this alliance?, vector=allaince score
@@ -763,7 +1063,7 @@ BTeam_basic team_basic(Team team){
 	stringstream ss;
 	ss<<"http://www.thebluealliance.com/api/v1/teams/show?teams="<<team;
 	auto data=scrape_cached(ss.str());
-	json_spirit::Value value;
+	nyi/*json_spirit::Value value;
 	read(data,value);
 	//cout<<value<<"\n";
 	for(auto a:value.get_array()){
@@ -803,7 +1103,7 @@ BTeam_basic team_basic(Team team){
 		}
 		return r;
 	}
-	nyi
+	nyi*/
 }
 
 struct BTeam_details{
@@ -889,7 +1189,7 @@ ostream& operator<<(ostream& o,BAward a){
 	return o<<")";
 }
 
-BAward::Recipient parse_recipient(json_spirit::Value value){
+/*BAward::Recipient parse_recipient(json_spirit::Value value){
 	BAward::Recipient r;
 	for(auto a:value.get_obj()){
 		auto k=a.name_;
@@ -908,9 +1208,9 @@ BAward::Recipient parse_recipient(json_spirit::Value value){
 		}
 	}
 	return r;
-}
+}*/
 
-BAward parse_award(json_spirit::Value value){
+/*BAward parse_award(json_spirit::Value value){
 	//cout<<value<<"\n";
 	BAward r;
 	for(auto a:value.get_obj()){
@@ -947,7 +1247,7 @@ BAward parse_award(json_spirit::Value value){
 		}
 	}
 	return r;
-}
+}*/
 
 //appears inside of the team details
 struct BEvent_model{
@@ -972,7 +1272,7 @@ ostream& operator<<(ostream& o,BEvent_model a){
 	return o<<")";
 }
 
-BEvent_model parse_event(json_spirit::Value value){
+/*BEvent_model parse_event(json_spirit::Value value){
 	//cout<<value<<"\n";
 	//nyi
 	BEvent_model r;
@@ -1035,7 +1335,7 @@ BEvent_model parse_event(json_spirit::Value value){
 		}
 	}
 	return r;
-}
+}*/
 
 struct BTeam_data{
 	Maybe<string> website;
@@ -1071,7 +1371,7 @@ ostream& operator<<(ostream& o,BTeam_data t){
 }
 
 BTeam_data parse_team_data(string page){
-	json_spirit::Value value;
+	nyi/*json_spirit::Value value;
 	read(page,value);
 	BTeam_data r;
 	//cout<<"start\n";
@@ -1127,7 +1427,7 @@ BTeam_data parse_team_data(string page){
 			nyi
 		}
 	}
-	return r;
+	return r;*/
 }
 
 BTeam_data team_data(Team team,int year){
@@ -1151,6 +1451,10 @@ vector<T> without_last(vector<T> v){
 
 vector<string> simplify_award_name(vector<string> sp){
 	assert(sp.size());
+
+	if(sp[0]=="Event"){
+		return simplify_award_name(tail(sp));
+	}
 
 	static const vector<string> remove_from_end{"Award","(#1)","Friday","Saturday","-"};
 	for(auto a:remove_from_end){

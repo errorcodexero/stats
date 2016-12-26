@@ -13,7 +13,7 @@ using namespace std;
 This is designed to project the strength of different events by giving the winning % of the teams appearing at that event this year in the previous year
 */
 
-bool nw_event(BEvent b){
+bool nw_event(Event_v2 b){
 	return !!strstr(b.name.c_str(),"PNW");
 }
 
@@ -47,7 +47,7 @@ int project(map<string,vector<string>> /*flags*/){
 		auto t=get_details(a.key).teams;
 		auto m=mapf(old_win_pct,t);
 		//cout<<sorted(m)<<"\n";
-		data|=make_tuple(get24thbest(m),mean(m),*a.name_short);
+		data|=make_tuple(get24thbest(m),mean(m),*a.short_name);
 	}
 	cout<<data<<"\n";
 	for(auto a:sorted(data)){
@@ -57,7 +57,7 @@ int project(map<string,vector<string>> /*flags*/){
 	auto m=mapf(old_win_pct,teams(matches2013));
 	cout<<"Worldwide average winning pcnt:"<<mean(m)<<"\n";
 	set<Team> nw_teams=[=](){
-		auto e=mapf([](BEvent b){ return b.key; },get_events(2013));
+		auto e=mapf([](auto b){ return b.key; },get_events(2013));
 		//cout<<e<<"\n";
 		vector<string> nw2013=filter([](string s){ return !!strstr(s.c_str(),"2013wa"); },e);
 		nw2013|=string("2013orpo");

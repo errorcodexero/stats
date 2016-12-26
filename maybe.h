@@ -60,6 +60,10 @@ class Maybe{
 		return !p && !m;
 	}
 
+	bool operator==(T const& t)const{
+		return p && *p==t;
+	}
+
 	bool operator!=(Maybe const& a)const{ return !(a==*this); }
 
 	bool operator<(Maybe const& a)const{

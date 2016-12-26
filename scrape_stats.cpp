@@ -1,5 +1,5 @@
 #include "scrape_stats.h"
-#include "json_spirit.h"
+//#include "json_spirit.h"
 #include "util.h"
 #include "scrape.h"
 #include "tuple.h"
@@ -23,7 +23,7 @@ typedef string Event_key;
 
 Maybe<Stats> pull_stats(Event_key k){
 	auto s=scrape_cached("http://www.thebluealliance.com/api/v2/event/"+k+"/stats");
-	json_spirit::Value value;
+	nyi/*json_spirit::Value value;
 	read(s,value);
 	if(value.type()==6) return Maybe<Stats>();
 
@@ -49,7 +49,7 @@ Maybe<Stats> pull_stats(Event_key k){
 			nyi
 		}
 	}
-	return r;
+	return r;*/
 }
 
 template<typename T>
@@ -134,7 +134,7 @@ vector<T> head(vector<T> v){
 }
 
 set<Event_key> events_by_year(Year year){
-	return to_set(mapf([](BEvent b){ return b.key; },get_events(year)));
+	nyi//return to_set(mapf([](BEvent b){ return b.key; },get_events(year)));
 	nyi //return to_set(mapf([](BEvent_details b){ return b.key; },get_events(year)));
 }
 

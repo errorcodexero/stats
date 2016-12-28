@@ -449,7 +449,7 @@ ostream& operator<<(ostream& o,Award_type a){
     X(JUDGES )
     X(HIGHEST_ROOKIE_SEED)
     X(ROOKIE_INSPIRATION )
-    X(INDUSTRIAL_DEESIGN )
+    X(INDUSTRIAL_DESIGN )
     X(QUALITY )
     X(SAFETY )
     X(SPORTSMANSHIP )

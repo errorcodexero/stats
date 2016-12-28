@@ -100,6 +100,81 @@ int top(){
 	return 0;
 }
 
+#define AWARD_CATEGORIES(X) \
+	X(CULTURE) X(WINNING) X(TECHNICAL) X(OTHER)
+enum class Award_category{
+	#define X(A) A,
+	AWARD_CATEGORIES(X)
+	#undef X
+};
+
+ostream& operator<<(ostream& o,Award_category a){
+	#define X(A) if(a==Award_category::A) return o<<""#A;
+	AWARD_CATEGORIES(X)
+	#undef X
+	assert(0);
+}
+
+pair<Award_category,float> award_class(Award_type award_type){
+	switch(award_type){
+		case Award_type::CHAIRMANS:
+			return make_pair(Award_category::CULTURE,1);
+		case Award_type::WINNER:
+			return make_pair(Award_category::WINNING,1);
+		case Award_type::FINALIST:
+			return make_pair(Award_category::WINNING,.5);
+		case Award_type::WOODIE_FLOWERS:
+		case Award_type::DEANS_LIST:
+		case Award_type::VOLUNTEER:
+		case Award_type::FOUNDERS:
+		case Award_type::BART_KAMEN_MEMORIAL:
+		case Award_type::MAKE_IT_LOUD:
+			return make_pair(Award_category::OTHER,1);
+		case Award_type::ENGINEERING_INSPIRATION:
+		case Award_type::ROOKIE_ALL_STAR:
+			return make_pair(Award_category::CULTURE,.5);
+		case Award_type::GRACIOUS_PROFESSIONALISM:
+		default:
+			return make_pair(Award_category::OTHER,1);
+		case Award_type::HIGHEST_ROOKIE_SEED:
+			return make_pair(Award_category::WINNING,.5);
+		//case Award_type::ROOKIE_
+		#define X(NAME) case Award_type::NAME:
+		X(INDUSTRIAL_DESIGN) X(QUALITY)
+		X(CREATIVITY) X(ENGINEERING_EXCELLENCE) X(EXCELLENCE_IN_DESIGN)
+		X(EXCELLENCE_IN_DESIGN_CAD) X(EXCELLENCE_IN_DESIGN_ANIMATION)
+		X(DRIVING_TOMORROWS_TECHNOLOGY) X(INNOVATION_IN_CONTROL)
+		X(AUTODESK_INVENTOR) X(LEADERSHIP_IN_CONTROL)
+		#undef X
+			return make_pair(Award_category::TECHNICAL,1);
+		case Award_type::NUM_1_SEED:
+		case Award_type::INCREDIBLE_PLAY:
+		case Award_type::BEST_OFFENSIVE_ROUND:
+		case Award_type::BEST_PLAY_OF_THE_DAY:
+		case Award_type::OUTSTANDING_DEFENSE:
+			return make_pair(Award_category::WINNING,.5);
+		case Award_type::POWER_TO_SIMPLIFY:
+			return make_pair(Award_category::TECHNICAL,1);
+		case Award_type::CHAIRMANS_HONORABLE_MENTION:
+			return make_pair(Award_category::CULTURE,.5);
+		case Award_type::TECHNICAL_EXECUTION_HONORABLE_MENTION:
+			return make_pair(Award_category::TECHNICAL,.5);
+		case Award_type::REALIZATION:
+			return make_pair(Award_category::TECHNICAL,1);
+		case Award_type::REALIZATION_HONORABLE_MENTION:
+			return make_pair(Award_category::TECHNICAL,.5);
+		case Award_type::HIGH_SCORE:
+			return make_pair(Award_category::WINNING,.5);
+		case Award_type::BEST_CRAFTSMANSHIP:
+			return make_pair(Award_category::TECHNICAL,1);
+		case Award_type::BEST_DEFENSIVE_MATCH:
+		case Award_type::PLAY_OF_THE_DAY:
+			return make_pair(Award_category::WINNING,.5);
+		case Award_type::PROGRAMMING:
+			return make_pair(Award_category::TECHNICAL,1);
+	}
+}
+
 int main(int argc,char **argv){
 	auto a=args(argc,argv);
 	if(a.size()==2 && a[0]=="--team"){
@@ -154,7 +229,7 @@ int main(int argc,char **argv){
 		//PRINT(event_keys);
 
 		using Award_name=string;
-		map<Award_name,pair<long unsigned,double>> at_events;//pair of # of times won and expected # of times won
+		map<Award_name,pair<double,double>> at_events;//pair of # of times won and expected # of times won
 
 		/*auto m=flatten(mapf(get_awards,event_keys));
 		for(auto award:m){
@@ -169,19 +244,24 @@ int main(int argc,char **argv){
 			auto awards=get_awards(event_key);
 			for(auto award:awards){
 				auto to_teams=filter([](auto a){ return a.team_number; },award.recipient_list);
-				auto expected=(0.0+to_teams.size())/teams.size();
+				auto p=award_class(award.award_type);
+				auto award_name=as_string(p.first);
+				auto weight=p.second;
+
+				auto expected=(0.0+weight*to_teams.size())/teams.size();
 				if(expected>0){
 					auto won=filter([=](auto a){ return a.team_number==team; },award.recipient_list).size();
 					/*PRINT(award);
 					PRINT(expected);
 					PRINT(won);*/
 
-					auto award_name=as_string(award.award_type);//simplify_award_name(award.name);
+					//auto award_name=as_string(award.award_type);//simplify_award_name(award.name);
+
 					auto f=at_events.find(award_name);
 					if(f==at_events.end()){
 						at_events[award_name]=make_pair(0,0);
 					}
-					at_events[award_name]+=make_pair(won,expected);
+					at_events[award_name]+=make_pair((double)weight*won,expected);
 				}
 			}
 		}
@@ -201,9 +281,9 @@ int main(int argc,char **argv){
 
 	vector<tuple<double,int,int>> team_scores;
 	for(auto team1:team_numbers){
-		auto t1_data=by_team[team1];
+		auto const& t1_data=by_team[team1];
 		for(auto team2:team_numbers){
-			auto t2_data=by_team[team2];
+			auto const& t2_data=by_team[team2];
 			double dist=0;
 			for(auto name:to_set(seconds(t1_data))|to_set(seconds(t2_data))){
 				auto get=[](auto const& data,auto const& key){
